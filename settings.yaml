@@ -1,8 +1,8 @@
 # local path
-dataset_path: '/home/salu133445/NAS/salu133445/midinet/lmd/lmd_full/'
-result_path: '/home/salu133445/NAS/salu133445/midinet/lpd/lpd_full'
+dataset_path: '/home/wan/Documents/projects/musegan/test_lmd/'
+result_path: '/home/wan/Documents/projects/musegan/test_lpd/'
 
 # parameters
-beat_resolution: 24
+beat_resolution: 4
 multicore: 30
 link_to_msd: False

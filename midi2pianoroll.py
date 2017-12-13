@@ -12,6 +12,15 @@ def merge_dicts(*dict_args):
         result.update(dictionary)
     return result
 
+def get_key_info(pm):
+    if len(pm.key_signature_changes) > 0:
+        key = pm.key_signature_changes[0].key_number  # ignore key changes
+        return key
+
+    else:
+        print 'does not have any key_signature_change'
+        return -1
+
 def get_time_signature_info_and_arrays(pm):
     """Given a pretty_midi.PrettyMIDI class instance, return its time signature
     info dictionary and time signature array dictionary."""
@@ -34,7 +43,7 @@ def get_time_signature_info_and_arrays(pm):
                              'time_signature_times': np.array(time_signature_times)}
     return time_signature_info, time_signature_arrays
 
-def get_beat_info_and_arrays(pm, beat_resolution=24, sort_tsc=True):
+def get_beat_info_and_arrays(pm, beat_resolution=4, sort_tsc=True):
     """Given a pretty_midi.PrettyMIDI class instance, return its beat info
     dictionary and beat array dictionary. If sort_tsc is True(by default), the
     time_signatrue_changes list of the pretty_midi object will first be sorted.
@@ -69,7 +78,7 @@ def get_beat_info_and_arrays(pm, beat_resolution=24, sort_tsc=True):
                    'downbeat_array': downbeat_array}
     return beat_info, beat_arrays
 
-def get_tempo_info_and_arrays(pm, beat_resolution=24, beat_times=None):
+def get_tempo_info_and_arrays(pm, beat_resolution=4, beat_times=None):
     """Given a pretty_midi.PrettyMIDI class instance, return its tempo info
     dictionary and tempo info array dictionary. If no beat_times is given,
     pm.get_beats(beat_start_time) will be first computed to get beat_times."""
@@ -105,7 +114,7 @@ def get_tempo_info_and_arrays(pm, beat_resolution=24, beat_times=None):
                     'tempo_array': tempo_array}
     return tempo_info, tempo_arrays
 
-def get_midi_info_and_arrays(pm, beat_resolution=24):
+def get_midi_info_and_arrays(pm, beat_resolution=4):
     """Given a pretty_midi.PrettyMIDI class instance, return its midi_info_dict
     and midi_array_dict."""
     # get time sigature changes info
@@ -118,9 +127,10 @@ def get_midi_info_and_arrays(pm, beat_resolution=24):
     # collect the results into dictionaries to return
     midi_info = merge_dicts(beat_info, time_signature_info, tempo_info)
     midi_arrays = merge_dicts(beat_arrays, time_signature_arrays, tempo_arrays)
+
     return midi_info, midi_arrays
 
-def get_piano_roll(instrument, beat_resolution=24, beat_times=None, tempo_array=None, pm=None):
+def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=None, pm=None):
     """Given a pretty_midi.Instrument class instance, return the pianoroll of
     the instrument. When one of the beat_times and the tempo_array is not given,
     the pretty_midi object should be given."""
@@ -178,7 +188,7 @@ def get_instrument_info(instrument):
             'family_num': int(instrument.program)//8,
             'family_name': pretty_midi.program_to_instrument_class(instrument.program)}
 
-def get_piano_rolls(pm, beat_resolution=24):
+def get_piano_rolls(pm, beat_resolution=4):
     """
     Convert a midi file to piano-rolls of multiple tracks.
 
@@ -226,8 +236,12 @@ def get_piano_rolls(pm, beat_resolution=24):
     midi_info, midi_arrays = get_midi_info_and_arrays(pm, beat_resolution)
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
+
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
+
+
+
         # get the piano-roll and the onset-roll of a specific instrument
         piano_roll, onset_roll = get_piano_roll(instrument, beat_resolution=beat_resolution,
                                                 beat_times=midi_arrays['beat_times'],
@@ -237,12 +251,39 @@ def get_piano_rolls(pm, beat_resolution=24):
         onset_rolls.append(onset_roll)
         # append information of current instrument to instrument dictionary
         instrument_info[str(idx)] = get_instrument_info(instrument)
+
+        if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
+            print 'program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name']
+            bass_piano_rolls = piano_roll
+
+
+
     info_dict = {'midi_arrays': midi_arrays,
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
-    return piano_rolls, onset_rolls, info_dict
 
-def midi_to_pianorolls(midi_path, beat_resolution=24):
+    key = get_key_info(pm)
+
+    bass_notes_for_chords = []
+
+    for i in range(0, bass_piano_rolls.shape[1], 8):
+
+        mini_roll = np.sum(bass_piano_rolls[:, i:(i + 8)], axis = 1)
+
+        if all(mini_roll == 0):
+            note = -1
+
+        else:
+            note = np.argmax(mini_roll)
+
+        bass_notes_for_chords.append(note)
+
+
+    chords = []
+
+    return piano_rolls, onset_rolls, info_dict, chords
+
+def midi_to_pianorolls(midi_path, beat_resolution=4):
     """
     Convert a midi file to piano-rolls of multiple tracks.
 

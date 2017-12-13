@@ -135,7 +135,7 @@ def converter(filepath):
         msd_id = os.path.basename(os.path.dirname(filepath))
     # convert the midi file into piano-rolls
     try:
-        piano_rolls, onset_rolls, info_dict = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
+        piano_rolls, onset_rolls, info_dict, chords = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
     except Exception as err:
         return None
     # get the path to save the results
