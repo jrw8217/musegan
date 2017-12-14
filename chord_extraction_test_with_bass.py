@@ -30,6 +30,7 @@ minor_notes = [['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb'], ['C#', 'D#', 'E', 'F#', '
 
 
 
+
 def find_chord_from_bass_note(key = 0, note_list = []):
     chord_list = []
 

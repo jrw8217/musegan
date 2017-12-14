@@ -228,6 +228,13 @@ def get_piano_rolls(pm, beat_resolution=4):
             instrument_info: dict
                 Contains information of each track
     """
+
+    # Get key from key_signature_changes
+    key = get_key_info(pm)
+
+    if key == -1:
+        return
+
     # create an empty instrument dictionary to store information of each instrument
     instrument_info = {}
     piano_rolls = []
@@ -239,8 +246,6 @@ def get_piano_rolls(pm, beat_resolution=4):
 
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
-
-
 
         # get the piano-roll and the onset-roll of a specific instrument
         piano_roll, onset_roll = get_piano_roll(instrument, beat_resolution=beat_resolution,
@@ -257,15 +262,10 @@ def get_piano_rolls(pm, beat_resolution=4):
             bass_piano_rolls = piano_roll
 
 
-
     info_dict = {'midi_arrays': midi_arrays,
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
 
-    key = get_key_info(pm)
-
-    if key == -1:
-        return
 
     print 'bass piano roll: ', bass_piano_rolls.shape
     bass_notes_for_chords = []
@@ -332,4 +332,7 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     """
     # load the MIDI file as a pretty_midi object
     pm = pretty_midi.PrettyMIDI(midi_path)
-    return get_piano_rolls(pm, beat_resolution)
+    print 'midi path:', midi_path
+    result = get_piano_rolls(pm, beat_resolution)
+    # print result
+    return result

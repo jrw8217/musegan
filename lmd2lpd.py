@@ -12,6 +12,10 @@ if settings['multicore'] > 1:
 
 warnings.filterwarnings('ignore')
 
+def is_four_to_four(midi_path):
+
+    return
+
 def msd_id_to_dirs(msd_id):
     """Given an MSD ID, generate the path prefix.
     E.g. TRABCD12345678 -> A/B/C/TRABCD12345678"""
@@ -24,13 +28,15 @@ def get_midi_path(msd_id, midi_md5):
 
 def make_sure_path_exists(path):
     """Create all intermediate-level directories if the given path not exist"""
-    while True:
-        if not os.path.exists(path):
-            try:
-                os.makedirs(path)
-                break
-            except OSError as e:
-                pass
+    # while True:
+    print("make path")
+    print(path)
+    if not os.path.exists(path):
+        try:
+            os.makedirs(path)
+            # break
+        except OSError as e:
+            pass
 
 def save_npz(filepath, arrays=None, sparse_matrices=None):
     """"Save the given matrices into one single '.npz' file."""
@@ -131,28 +137,37 @@ def converter(filepath):
     storing midi info to a dictionary."""
     # get the msd_id and midi_md5
     midi_md5 = os.path.splitext(os.path.basename(filepath))[0]
-    print('midi_md5: ' + midi_md5)
+
     if settings['link_to_msd']:
         msd_id = os.path.basename(os.path.dirname(filepath))
     # convert the midi file into piano-rolls
     try:
         piano_rolls, onset_rolls, info_dict, chords = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
+        numerators = info_dict['midi_arrays']['time_signature_numerators']
+        denominators = info_dict['midi_arrays']['time_signature_denominators']
+        for numerator, denominator in zip(numerators, denominators):
+            if numerator != 4 or denominator != 4:
+                print("not 4/4")
+                return None
     except Exception as err:
+        print(err)
         return None
+
     # get the path to save the results
     if settings['link_to_msd']:
         result_midi_dir = os.path.join(settings['result_path'], msd_id_to_dirs(msd_id), midi_md5)
     else:
         result_midi_dir = os.path.join(settings['result_path'], midi_md5[0], midi_md5)
     # save the piano-rolls an the onset-rolls into files
+    # print(result_midi_dir)
     make_sure_path_exists(result_midi_dir)
 
-    print('path:' + result_midi_dir)
-
+    print("save npz")
     save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
     save_npz(os.path.join(result_midi_dir, 'onset_rolls.npz'), sparse_matrices=onset_rolls)
     save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)
 
+    # print("additional save")
     # save the midi arrays into files
     sparse_matrices_keys = ['tempo_array', 'beat_array', 'downbeat_array']
     sparse_matrices = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key in sparse_matrices_keys}
@@ -169,12 +184,14 @@ def converter(filepath):
 def main():
     # traverse from dataset root directory and serarch for midi files
     midi_filepaths = []
-    for dirpath, _, filenames in os.walk(settings['dataset_path']):
+    for dirpath, subdirs, filenames in os.walk(settings['dataset_path']):
         for filename in filenames:
             if filename.endswith('.mid'):
                 midi_filepaths.append(os.path.join(dirpath, filename))
-    # parrallelize the converter if in multicore mode
+
+    # parallelize the converter if in multicore mode
     if settings['multicore'] > 1:
+        print(midi_filepaths)
         kv_pairs = joblib.Parallel(n_jobs=settings['multicore'], verbose=5)(
             joblib.delayed(converter)(midi_filepath) for midi_filepath in midi_filepaths)
         # save the midi dict into a json file
@@ -188,7 +205,10 @@ def main():
     else:
         midi_dict = {}
         for midi_filepath in midi_filepaths:
+            print(midi_filepath)
             kv_pair = converter(midi_filepath)
+            if kv_pair is None:
+                continue
             midi_dict[kv_pair[0]] = kv_pair[1]
         # save the midi dict into a json file
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
