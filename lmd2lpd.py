@@ -41,7 +41,7 @@ def save_npz(filepath, arrays=None, sparse_matrices=None):
         else:
             # if arg arrays is given as other iterable, set to default name, 'arr_0', 'arr_1', ...
             for idx, array in enumerate(arrays):
-                arrays_dict['arr_' + idx] = array
+                arrays_dict['arr_' + str(idx)] = array
     if sparse_matrices:
         if isinstance(sparse_matrices, dict):
             # convert sparse matrices to sparse representations of arrays if any
@@ -131,6 +131,7 @@ def converter(filepath):
     storing midi info to a dictionary."""
     # get the msd_id and midi_md5
     midi_md5 = os.path.splitext(os.path.basename(filepath))[0]
+    print('midi_md5: ' + midi_md5)
     if settings['link_to_msd']:
         msd_id = os.path.basename(os.path.dirname(filepath))
     # convert the midi file into piano-rolls
@@ -145,8 +146,13 @@ def converter(filepath):
         result_midi_dir = os.path.join(settings['result_path'], midi_md5[0], midi_md5)
     # save the piano-rolls an the onset-rolls into files
     make_sure_path_exists(result_midi_dir)
+
+    print('path:' + result_midi_dir)
+
     save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
     save_npz(os.path.join(result_midi_dir, 'onset_rolls.npz'), sparse_matrices=onset_rolls)
+    save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)
+
     # save the midi arrays into files
     sparse_matrices_keys = ['tempo_array', 'beat_array', 'downbeat_array']
     sparse_matrices = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key in sparse_matrices_keys}

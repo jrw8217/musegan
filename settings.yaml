@@ -4,5 +4,5 @@ result_path: '/home/wan/Documents/projects/musegan/test_lpd/'
 
 # parameters
 beat_resolution: 4
-multicore: 30
-link_to_msd: False
+multicore: 16
+link_to_msd: True

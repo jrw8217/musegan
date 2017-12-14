@@ -2,7 +2,7 @@
 
 import numpy as np
 import pretty_midi
-
+import chord_extraction_test_with_bass
 
 def merge_dicts(*dict_args):
     """Given any number of dicts, shallow copy and merge into a new dict,
@@ -264,11 +264,15 @@ def get_piano_rolls(pm, beat_resolution=4):
 
     key = get_key_info(pm)
 
+    if key == -1:
+        return
+
+    print 'bass piano roll: ', bass_piano_rolls.shape
     bass_notes_for_chords = []
 
-    for i in range(0, bass_piano_rolls.shape[1], 8):
+    for i in range(0, bass_piano_rolls.shape[0], 8):
 
-        mini_roll = np.sum(bass_piano_rolls[:, i:(i + 8)], axis = 1)
+        mini_roll = np.sum(bass_piano_rolls[i:(i + 8), :], axis = 0)
 
         if all(mini_roll == 0):
             note = -1
@@ -278,8 +282,11 @@ def get_piano_rolls(pm, beat_resolution=4):
 
         bass_notes_for_chords.append(note)
 
+    print 'bass notes:', bass_notes_for_chords
 
-    chords = []
+
+    chords = chord_extraction_test_with_bass.find_chord_from_bass_note(key, bass_notes_for_chords)
+    print 'chords:', chords, type(chords)
 
     return piano_rolls, onset_rolls, info_dict, chords
 
