@@ -270,9 +270,9 @@ def get_piano_rolls(pm, beat_resolution=4):
     print 'bass piano roll: ', bass_piano_rolls.shape
     bass_notes_for_chords = []
 
-    for i in range(0, bass_piano_rolls.shape[0], 8):
+    for i in range(0, bass_piano_rolls.shape[0], 16):
 
-        mini_roll = np.sum(bass_piano_rolls[i:(i + 8), :], axis = 0)
+        mini_roll = np.sum(bass_piano_rolls[i:(i + 16), :], axis = 0)
 
         if all(mini_roll == 0):
             note = -1
