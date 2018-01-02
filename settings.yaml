@@ -1,7 +1,9 @@
 # local path
-dataset_path: '/home/wan/PycharmProjects/test/test1/Yesterday_with_bass/'
+
+dataset_path: '/data1/lakh/lmd_matched'
 #lpd_path : 'home/wan/Documents/projects/musegan/test_lpd'
-result_path: '/home/wan/PycharmProjects/test/test1/Yesterday_with_bass_test_lpd/'
+result_path: '/data1/lakh/lmd_matched_processed_with_one_chord_per_bar'
+
 
 # parameters
 beat_resolution: 4

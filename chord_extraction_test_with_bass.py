@@ -169,9 +169,3 @@ def find_chord_from_midi_file(midi_folder, target_folder):
 
     #pickle.dump(key_counter, open(midi_folder + '/key_counter_of_' + midi_folder + '.pickle', 'wb'))
 
-
-
-
-if __name__ == '__main__':
-    find_chord_from_midi_file('/home/wan/dataset/Yesterday_with_bass_16', '/home/wan/dataset/Yesterday_with_bass_16_chord')
-    print 'hello'
