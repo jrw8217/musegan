@@ -157,7 +157,7 @@ def converter(filepath):
     if settings['link_to_msd']:
         result_midi_dir = os.path.join(settings['result_path'], msd_id_to_dirs(msd_id), midi_md5)
     else:
-        result_midi_dir = os.path.join(settings['result_path'], midi_md5[0], midi_md5)
+        result_midi_dir = os.path.join(settings['result_path' ], midi_md5[0], midi_md5)
     # save the piano-rolls an the onset-rolls into files
     # print(result_midi_dir)
     make_sure_path_exists(result_midi_dir)
@@ -165,7 +165,7 @@ def converter(filepath):
     print("save npz")
     save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
     save_npz(os.path.join(result_midi_dir, 'onset_rolls.npz'), sparse_matrices=onset_rolls)
-    save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)
+    save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)gi
 
     # print("additional save")
     # save the midi arrays into files

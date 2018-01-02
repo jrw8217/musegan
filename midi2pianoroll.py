@@ -270,9 +270,9 @@ def get_piano_rolls(pm, beat_resolution=4):
     print 'bass piano roll: ', bass_piano_rolls.shape
     bass_notes_for_chords = []
 
-    for i in range(0, bass_piano_rolls.shape[0], 8):
+    for i in range(0, bass_piano_rolls.shape[0], 16):
 
-        mini_roll = np.sum(bass_piano_rolls[i:(i + 8), :], axis = 0)
+        mini_roll = np.sum(bass_piano_rolls[i:(i + 16), :], axis = 0)
 
         if all(mini_roll == 0):
             note = -1
@@ -283,6 +283,7 @@ def get_piano_rolls(pm, beat_resolution=4):
         bass_notes_for_chords.append(note)
 
     print 'bass notes:', bass_notes_for_chords
+    print 'len:', len(bass_notes_for_chords)
 
 
     chords = chord_extraction_test_with_bass.find_chord_from_bass_note(key, bass_notes_for_chords)
@@ -332,7 +333,6 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     """
     # load the MIDI file as a pretty_midi object
     pm = pretty_midi.PrettyMIDI(midi_path)
-    print 'midi path:', midi_path
     result = get_piano_rolls(pm, beat_resolution)
     # print result
     return result

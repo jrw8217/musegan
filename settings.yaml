@@ -1,9 +1,9 @@
 # local path
-dataset_path: '/home/wan/Documents/projects/musegan/test_lmd/'
+dataset_path: '/home/wan/PycharmProjects/test/test1/Yesterday_with_bass/'
 #lpd_path : 'home/wan/Documents/projects/musegan/test_lpd'
-result_path: '/home/wan/Documents/projects/musegan/test_lpd/'
+result_path: '/home/wan/PycharmProjects/test/test1/Yesterday_with_bass_test_lpd/'
 
 # parameters
 beat_resolution: 4
-multicore: 1
+multicore: 30
 link_to_msd: True

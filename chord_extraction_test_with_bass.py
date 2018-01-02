@@ -81,9 +81,9 @@ def find_chord_from_bass_note(key = 0, note_list = []):
 
 def get_key_and_bass_note_from_midi(name, path):
 
-    print name
+    print 'get key and bass notes from', name
 
-    mid = pm.PrettyMIDI(os.path.join(path, name) + '.mid')
+    mid = pm.PrettyMIDI(os.path.join(path, name))
 
     # Get key
     if len(mid.key_signature_changes) > 0:
@@ -92,6 +92,7 @@ def get_key_and_bass_note_from_midi(name, path):
     else:
         print name, 'does not have any key_signature_change'
         return -1
+
 
     #Get bass note
     bass_counter = 0
@@ -144,6 +145,7 @@ def find_chord_from_midi_file(midi_folder, target_folder):
             _name = name.replace('\\', '/')
             target_path = target_folder+_path[len(midi_folder):]
 
+
             if not os.path.exists(target_path):
                 os.makedirs(target_path)
 
@@ -153,7 +155,7 @@ def find_chord_from_midi_file(midi_folder, target_folder):
 
                 # Get chord
                 chord_list = find_chord_from_bass_note(key=key, note_list=bass_note)
-                print chord_list
+                print len(chord_list), chord_list
 
                 pickle.dump(chord_list, open(target_path + _name + '_chord.pickle', 'wb'))
 
@@ -171,5 +173,5 @@ def find_chord_from_midi_file(midi_folder, target_folder):
 
 
 if __name__ == '__main__':
-    find_chord_from_midi_file('Yesterday_with_bass_16', 'Yeaterday_with_bass_16_chord')
+    find_chord_from_midi_file('/home/wan/dataset/Yesterday_with_bass_16', '/home/wan/dataset/Yesterday_with_bass_16_chord')
     print 'hello'
