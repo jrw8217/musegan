@@ -182,6 +182,7 @@ def converter(filepath):
         return (midi_md5, info_dict['midi_info'])
 
 def main():
+    num_songs = 0
     # traverse from dataset root directory and serarch for midi files
     midi_filepaths = []
     for dirpath, subdirs, filenames in os.walk(settings['dataset_path']):
@@ -196,6 +197,7 @@ def main():
             joblib.delayed(converter)(midi_filepath) for midi_filepath in midi_filepaths)
         # save the midi dict into a json file
         kv_pairs = [kv_pair for kv_pair in kv_pairs if kv_pair is not None]
+        num_songs += len(kv_pairs)
         midi_dict = {}
         for key in set([kv_pair[0] for kv_pair in kv_pairs]):
             midi_dict[key] = {}
@@ -212,6 +214,6 @@ def main():
             midi_dict[kv_pair[0]] = kv_pair[1]
         # save the midi dict into a json file
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
-
+    print("the number of songs: %d" % num_songs)
 if __name__ == "__main__":
     main()

@@ -1,9 +1,9 @@
 # local path
-dataset_path: '/home/wan/Documents/projects/musegan/test_lmd/'
+dataset_path: '/data1/lakh/lmd_matched'
 #lpd_path : 'home/wan/Documents/projects/musegan/test_lpd'
-result_path: '/home/wan/Documents/projects/musegan/test_lpd/'
+result_path: '/data1/lakh/lmd_matched_processed_with_one_chord_per_bar'
 
 # parameters
 beat_resolution: 4
-multicore: 1
+multicore: 30
 link_to_msd: True
