@@ -33,9 +33,9 @@ def check_is_drum_of_Grand_Piano(midi_folder):
                     is_drum_count = 0
                     for key, dic in zip(dict.keys(), dict.values()):
                         if dic['is_drum'] == True:
-                            print '0: ', dict['0']
-                            print 'key: ', key
-                            print dic
+                            #print '0: ', dict['0']
+                            #print 'key: ', key
+                            #print dic
                             is_drum_count += 1
 
                     print 'is_drum count = ', is_drum_count
@@ -56,9 +56,9 @@ def check_is_drum_of_Grand_Piano(midi_folder):
     print '-----------------------------------------------'
     print 'song count: ', song_count
     print 'one_is_drum count: ', one_is_drum
-    print 'not one is_drum: ', not_one_is_drum
+    print 'not one is_drum: ', not_one_is_drum[0:10]
 
 
 if __name__ == '__main__':
-    path = '/home/wan/Documents/projects/data_processed/test_lmd_processed'
+    path = '/data1/lakh/lmd_matched_processed_with_one_chord_per_bar'
     check_is_drum_of_Grand_Piano(path)
