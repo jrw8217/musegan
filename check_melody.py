@@ -55,9 +55,9 @@ def check_is_drum_of_Grand_Piano(midi_folder):
     print '-----------------------------------------------'
     print 'song count: ', song_count
     print 'melody track count: ', melody_track_count
-    print 'no melody count: ', no_melody_track
+    #print 'no melody count: ', no_melody_track
 
 
 if __name__ == '__main__':
-    path = '/home/wan/Documents/projects/data_processed/test_lmd_processed'
+    path = '/data1/lakh/lmd_matched_processed_with_one_chord_per_bar'
     check_is_drum_of_Grand_Piano(path)
