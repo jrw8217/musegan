@@ -55,7 +55,6 @@ def check_is_drum_of_Grand_Piano(midi_folder):
     print '-----------------------------------------------'
     print 'song count: ', song_count
     print 'melody track count: ', melody_track_count
-    print 'no melody count: ', no_melody_track
 
 
 if __name__ == '__main__':
