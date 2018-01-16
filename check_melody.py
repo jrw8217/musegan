@@ -27,16 +27,16 @@ def check_is_drum_of_Grand_Piano(midi_folder):
                     song_count += 1
                     print _path
                     with open(_path + _name) as inst:
-                        dict = json.load(inst)
+                        dictionary = json.load(inst)
 
 
                     melody_count = 0
-                    for key, dic in zip(dict.keys(), dict.values()):
+                    for key, dic in zip(dictionary.keys(), dictionary.values()):
                         if dic['name'].lower() == 'melody':
                             print 'key: ', key
                             print dic
                             melody_count += 1
-
+			    
                     print 'melody count = ', melody_count
 
                     if melody_count > 0:
@@ -44,7 +44,7 @@ def check_is_drum_of_Grand_Piano(midi_folder):
                     else:
                         no_melody_track.append(_path)
 
-
+		    print 'melody track count = ', melody_track_count
 
             except:
                 exception_str = 'Unexpected error in ' + name,  sys.exc_info()[0]
@@ -58,5 +58,5 @@ def check_is_drum_of_Grand_Piano(midi_folder):
 
 
 if __name__ == '__main__':
-    path = '/data1/lakh/lmd_matched_processed_with_one_chord_per_bar'
+    path = '/data/midi/lmd_matched_processed'
     check_is_drum_of_Grand_Piano(path)

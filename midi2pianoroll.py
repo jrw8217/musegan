@@ -4,6 +4,7 @@ import numpy as np
 import pretty_midi
 import chord_extraction_test_with_bass
 
+
 def merge_dicts(*dict_args):
     """Given any number of dicts, shallow copy and merge into a new dict,
     precedence goes to key value pairs in latter dicts."""
@@ -233,7 +234,8 @@ def get_piano_rolls(pm, beat_resolution=4):
     key = get_key_info(pm)
 
     if key == -1:
-        return
+
+        return None
 
     # create an empty instrument dictionary to store information of each instrument
     instrument_info = {}
@@ -241,6 +243,13 @@ def get_piano_rolls(pm, beat_resolution=4):
     onset_rolls = []
     # get the midi information and the beat/tempo arrays
     midi_info, midi_arrays = get_midi_info_and_arrays(pm, beat_resolution)
+    numerators = midi_arrays['time_signature_numerators']
+    denominators = midi_arrays['time_signature_denominators']
+    for numerator, denominator in zip(numerators, denominators):
+        if numerator != 4 or denominator != 4:
+            print("not 4/4")
+            return None
+
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
 
@@ -261,18 +270,44 @@ def get_piano_rolls(pm, beat_resolution=4):
             print 'program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name']
             bass_piano_rolls = piano_roll
 
+    key_pitch = key % 12
+    print 'key pitch: ', key_pitch
+    new_piano_rolls = []
+    for piano_roll in piano_rolls:
+        new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
+        for time_slice in range(piano_roll.shape[0]):
+            for pitch in range(piano_roll.shape[1]):
+                if pitch >= key_pitch:
+                    new_piano_roll[time_slice][pitch - key_pitch] = piano_roll[time_slice][pitch]
+        new_piano_rolls.append(new_piano_roll)
+
+    new_onset_rolls = []
+    for onset_roll in onset_rolls:
+        new_onset_roll = np.zeros(shape = onset_roll.shape, dtype = int)
+        for time_slice in range(onset_roll.shape[0]):
+            for pitch in range(onset_roll.shape[1]):
+                if pitch >= key_pitch:
+                    new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
+        new_onset_rolls.append(new_onset_roll)
+
 
     info_dict = {'midi_arrays': midi_arrays,
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
 
 
+    new_bass_piano_rolls = np.zeros(shape = bass_piano_rolls.shape, dtype = int)
+    for time_slice in range(bass_piano_rolls.shape[0]):
+        for pitch in range(bass_piano_rolls.shape[1]):
+            if pitch >= key_pitch:
+                new_bass_piano_rolls[time_slice][pitch - key_pitch] = bass_piano_rolls[time_slice][pitch]
+
     print 'bass piano roll: ', bass_piano_rolls.shape
     bass_notes_for_chords = []
 
-    for i in range(0, bass_piano_rolls.shape[0], 16):
+    for i in range(0, new_bass_piano_rolls.shape[0], 8):
 
-        mini_roll = np.sum(bass_piano_rolls[i:(i + 16), :], axis = 0)
+        mini_roll = np.sum(new_bass_piano_rolls[i:(i + 8), :], axis = 0)
 
         if all(mini_roll == 0):
             note = -1
@@ -284,12 +319,13 @@ def get_piano_rolls(pm, beat_resolution=4):
 
     print 'bass notes:', bass_notes_for_chords
     print 'len:', len(bass_notes_for_chords)
+    print 'key:', key
 
 
-    chords = chord_extraction_test_with_bass.find_chord_from_bass_note(key, bass_notes_for_chords)
+    chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
     print 'chords:', chords, type(chords)
 
-    return piano_rolls, onset_rolls, info_dict, chords
+    return new_piano_rolls, new_onset_rolls, info_dict, chords
 
 def midi_to_pianorolls(midi_path, beat_resolution=4):
     """
@@ -331,8 +367,10 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
             instrument_info: dict
                 Contains information of each track
     """
-    # load the MIDI file as a pretty_midi object
+    # load the MIDI file as a pretty_midi
+    print '-------------------------------------------------------------------------'
+    print midi_path
     pm = pretty_midi.PrettyMIDI(midi_path)
     result = get_piano_rolls(pm, beat_resolution)
-    # print result
+    print '-------------------------------------------------------------------------'
     return result

@@ -7,6 +7,7 @@ import scipy.sparse
 from config import settings
 from midi2pianoroll import midi_to_pianorolls
 
+
 if settings['multicore'] > 1:
     import joblib
 
@@ -143,12 +144,12 @@ def converter(filepath):
     # convert the midi file into piano-rolls
     try:
         piano_rolls, onset_rolls, info_dict, chords = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
-        numerators = info_dict['midi_arrays']['time_signature_numerators']
-        denominators = info_dict['midi_arrays']['time_signature_denominators']
-        for numerator, denominator in zip(numerators, denominators):
-            if numerator != 4 or denominator != 4:
-                print("not 4/4")
-                return None
+        #numerators = info_dict['midi_arrays']['time_signature_numerators']
+        #denominators = info_dict['midi_arrays']['time_signature_denominators']
+        #for numerator, denominator in zip(numerators, denominators):
+        #    if numerator != 4 or denominator != 4:
+        #        print("not 4/4")
+        #        return None
     except Exception as err:
         print(err)
         return None
@@ -192,7 +193,7 @@ def main():
 
     # parallelize the converter if in multicore mode
     if settings['multicore'] > 1:
-        print(midi_filepaths)
+        #print(midi_filepaths)
         kv_pairs = joblib.Parallel(n_jobs=settings['multicore'], verbose=5)(
             joblib.delayed(converter)(midi_filepath) for midi_filepath in midi_filepaths)
         # save the midi dict into a json file
@@ -215,5 +216,6 @@ def main():
         # save the midi dict into a json file
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
     print("the number of songs: %d" % num_songs)
+
 if __name__ == "__main__":
     main()
