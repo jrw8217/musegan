@@ -1,9 +1,9 @@
 # local path
 
-dataset_path: '/home/wan/Documents/projects/data/test_lmd'
-#lpd_path : 'home/wan/Documents/projects/musegan/test_lpd'
-result_path: '/home/wan/Documents/projects/data_processed/test_lmd_processed'
-
+dataset_path: '/data1/lakh/lmd_full'
+#other path : 'home/wan/Documents/projects/data/test_lmd'
+result_path: '/data1/lakh/lmd_full_processed_ckey'
+#other path : '/home/wan/Documents/projects/data_processed/test_lmd_processed'
 
 # parameters
 beat_resolution: 4

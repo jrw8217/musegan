@@ -370,7 +370,10 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     # load the MIDI file as a pretty_midi
     print '-------------------------------------------------------------------------'
     print midi_path
-    pm = pretty_midi.PrettyMIDI(midi_path)
-    result = get_piano_rolls(pm, beat_resolution)
+    try:
+        pm = pretty_midi.PrettyMIDI(midi_path)
+        result = get_piano_rolls(pm, beat_resolution)
+    except:
+        pass
     print '-------------------------------------------------------------------------'
     return result
