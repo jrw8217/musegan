@@ -19,7 +19,7 @@ def get_key_info(pm):
         return key
 
     else:
-        print 'does not have any key_signature_change'
+        print('does not have any key_signature_change')
         return -1
 
 def get_time_signature_info_and_arrays(pm):
@@ -267,11 +267,11 @@ def get_piano_rolls(pm, beat_resolution=4):
         instrument_info[str(idx)] = get_instrument_info(instrument)
 
         if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
-            print 'program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name']
+            # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])
             bass_piano_rolls = piano_roll
 
     key_pitch = key % 12
-    print 'key pitch: ', key_pitch
+    print('key pitch: ', key_pitch)
     new_piano_rolls = []
     for piano_roll in piano_rolls:
         new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
@@ -302,7 +302,7 @@ def get_piano_rolls(pm, beat_resolution=4):
             if pitch >= key_pitch:
                 new_bass_piano_rolls[time_slice][pitch - key_pitch] = bass_piano_rolls[time_slice][pitch]
 
-    print 'bass piano roll: ', bass_piano_rolls.shape
+    # print('bass piano roll: ', bass_piano_rolls.shape)
     bass_notes_for_chords = []
 
     for i in range(0, new_bass_piano_rolls.shape[0], 8):
@@ -317,13 +317,13 @@ def get_piano_rolls(pm, beat_resolution=4):
 
         bass_notes_for_chords.append(note)
 
-    print 'bass notes:', bass_notes_for_chords
-    print 'len:', len(bass_notes_for_chords)
-    print 'key:', key
+    # print('bass notes:', bass_notes_for_chords)
+    print('len:', len(bass_notes_for_chords))
+    print('key:', key)
 
 
     chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
-    print 'chords:', chords, type(chords)
+    print('chords:', chords, type(chords))
 
     return new_piano_rolls, new_onset_rolls, info_dict, chords
 
@@ -368,12 +368,12 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
                 Contains information of each track
     """
     # load the MIDI file as a pretty_midi
-    print '-------------------------------------------------------------------------'
-    print midi_path
+    print('-------------------------------------------------------------------------')
+    print(midi_path)
     try:
         pm = pretty_midi.PrettyMIDI(midi_path)
         result = get_piano_rolls(pm, beat_resolution)
     except:
         pass
-    print '-------------------------------------------------------------------------'
+    print('-------------------------------------------------------------------------')
     return result
