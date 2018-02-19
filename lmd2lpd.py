@@ -37,6 +37,7 @@ def make_sure_path_exists(path):
             os.makedirs(path)
             # break
         except OSError as e:
+            print('Cannot make dir ' + path)
             pass
 
 def save_npz(filepath, arrays=None, sparse_matrices=None):
@@ -184,6 +185,7 @@ def converter(filepath):
 
 def main():
     num_songs = 0
+    make_sure_path_exists(settings['result_path'])
     # traverse from dataset root directory and serarch for midi files
     midi_filepaths = []
     for dirpath, subdirs, filenames in os.walk(settings['dataset_path']):

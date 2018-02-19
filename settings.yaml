@@ -1,11 +1,11 @@
 # local path
 
 dataset_path: '/data1/lakh/lmd_full'
-#other path : 'home/wan/Documents/projects/data/test_lmd'
+#other path : '/home/wan/Documents/projects/musegan/test_full'
 result_path: '/data1/lakh/lmd_full_processed_ckey'
-#other path : '/home/wan/Documents/projects/data_processed/test_lmd_processed'
+#other path : '/home/wan/Documents/projects/data_processed/test_full_processed'
 
 # parameters
 beat_resolution: 4
 multicore: 30
-link_to_msd: True
+link_to_msd: False
