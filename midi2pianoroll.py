@@ -16,6 +16,8 @@ def merge_dicts(*dict_args):
 def get_key_info(pm):
     if len(pm.key_signature_changes) > 0:
         key = pm.key_signature_changes[0].key_number  # ignore key changes
+        if key > 11:
+            print('Minor key')
         return key
 
     else:
@@ -233,7 +235,7 @@ def get_piano_rolls(pm, beat_resolution=4):
     # Get key from key_signature_changes
     key = get_key_info(pm)
 
-    if key == -1:
+    if key == -1 or key > 11:
 
         return None
 
