@@ -81,7 +81,7 @@ def find_chord_from_bass_note(key = 0, note_list = []):
 
 def get_key_and_bass_note_from_midi(name, path):
 
-    print 'get key and bass notes from', name
+    print('get key and bass notes from', name)
 
     mid = pm.PrettyMIDI(os.path.join(path, name))
 
@@ -90,7 +90,7 @@ def get_key_and_bass_note_from_midi(name, path):
         key = mid.key_signature_changes[0].key_number  # ignore key changes
 
     else:
-        print name, 'does not have any key_signature_change'
+        print(name+'does not have any key_signature_change')
         return -1
 
 
@@ -103,18 +103,18 @@ def get_key_and_bass_note_from_midi(name, path):
             break
 
         if instrument.program < 40 and instrument.program > 31: # find bass from program number
-            print instrument.name
+            print(instrument.name)
             bass_piano_roll = np.copy(instrument.get_piano_roll(fs=8))
 
             bass_counter += 1
 
     if bass_counter == 0:
-        print name, 'does not have any bass instrument'
+        print(name+'does not have any bass instrument')
         return -1
 
     bass_notes = []
 
-    print bass_piano_roll.shape[1]
+    # print(bass_piano_roll.shape[1])
     for i in range(0, bass_piano_roll.shape[1], 8):
 
         mini_roll = np.sum(bass_piano_roll[:, i:(i + 8)], axis = 1)
@@ -128,7 +128,7 @@ def get_key_and_bass_note_from_midi(name, path):
         bass_notes.append(note)
 
 
-    print key, bass_notes
+    print(key, bass_notes)
     return key, bass_notes
 
 
@@ -140,7 +140,7 @@ def find_chord_from_midi_file(midi_folder, target_folder):
     for path, subdirs, files in os.walk(midi_folder):
 
         for name in files:
-            print name
+            print(name)
             _path = path.replace('\\', '/') + '/'
             _name = name.replace('\\', '/')
             target_path = target_folder+_path[len(midi_folder):]
@@ -155,7 +155,7 @@ def find_chord_from_midi_file(midi_folder, target_folder):
 
                 # Get chord
                 chord_list = find_chord_from_bass_note(key=key, note_list=bass_note)
-                print len(chord_list), chord_list
+                # print(len(chord_list), chord_list)
 
                 pickle.dump(chord_list, open(target_path + _name + '_chord.pickle', 'wb'))
 
