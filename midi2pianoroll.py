@@ -140,7 +140,7 @@ def get_midi_info_and_arrays(pm, beat_resolution=4):
 
 def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=None, pm=None):
     print '-------------------------------'
-    print 'instrument name:', instrument.name
+    # print 'instrument name:', instrument.name
     """Given a pretty_midi.Instrument class instance, return the pianoroll of
     the instrument. When one of the beat_times and the tempo_array is not given,
     the pretty_midi object should be given."""
@@ -153,7 +153,7 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
     # create the piano roll and the onset roll
     piano_roll = np.zeros(shape=(beat_resolution*num_beats, 128), dtype=int)
     onset_roll = np.zeros(shape=(beat_resolution*num_beats, 1), dtype=bool)
-    print beat_times
+    # print beat_times
     # print tempo_array
     # calculate pixel per beat
     ppbeat = beat_resolution
@@ -161,7 +161,6 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
     # iterate through notes
     for note in instrument.notes:
         if note.end < beat_times[0]:
-            print 'bye'
             continue
         else:
             # print '----------------------------'
