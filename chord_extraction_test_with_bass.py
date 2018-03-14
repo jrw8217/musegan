@@ -14,7 +14,8 @@ major_seventh_chords = ['M7', 'm7', 'm7', 'M7', '7', 'm7', 'm7-5']
 major_notes = [['C', 'D', 'E', 'F', 'G', 'A', 'B'], ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'], ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'],
                ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'], ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'], ['F', 'G', 'A', 'Bb', 'C', 'D', 'E'],
                ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'], ['G', 'A', 'B', 'C', 'D', 'E', 'F#'], ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'],
-               ['A' ,'B', 'C#', 'D', 'E', 'F#', 'G#'], ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'], ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']]
+               ['A' ,'B', 'C#', 'D', 'E', 'F#', 'G#'], ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'], ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']
+               ]
 
 
 minor_scale = [0, 2, 3, 5, 7, 8, 10]
@@ -75,7 +76,100 @@ def find_chord_from_bass_note(key = 0, note_list = []):
     return chord_list
 
 
-    #print 'tempo: ', mid.get_tempo_changes()[1]
+def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([]), bass_piano_roll = np.array([])):
+    scale_degree = key % 12
+    chord_list = []
+
+    low_piano_rolls = np.asarray([row[:(60 + scale_degree)] for row in piano_rolls])
+    print(low_piano_rolls.shape)
+    for i in range(0, low_piano_rolls.shape[0], 8):
+        # print('---------------------------', i/8, 'th chord', '---------------------------')
+        mini_roll = np.sum(low_piano_rolls[i:(i + 8), :], axis = 0)
+        # print('mini_roll:', mini_roll)
+
+        if all(mini_roll == 0):
+            chord_list.append('-')
+            print('no chord since no onset')
+            continue
+
+        histo = np.zeros(12)
+        for pitch in range(len(mini_roll)):
+            histo[pitch % 12] += mini_roll[pitch]
+            # print('pitch and histo:', pitch, histo)
+        # print('histo:', histo)
+
+        sorted_histo = np.sort(histo, axis=0)
+        nonzero_idx = sorted_histo > 0
+        notes = np.argsort(histo, axis=0)
+        notes = notes[nonzero_idx]
+        root_note = notes[-1]
+
+        if np.array(bass_piano_roll).size:
+            bass_mini_roll = np.sum(bass_piano_roll[i:(i + 8), :], axis = 0)
+            # print('bass_mini_roll:', bass_mini_roll)
+            bass_histo = np.zeros(12)
+            for pitch in range(len(bass_mini_roll)):
+                bass_histo[pitch % 12] += bass_mini_roll[pitch]
+            # print('bass :', bass_histo)
+
+            if not all(bass_mini_roll == 0):
+                root_note = np.argmax(bass_histo)
+
+        # print('root_note: ', root_note)
+
+        if root_note in major_scale: # Check diatonic
+            root_ind = major_scale.index(root_note)
+            max_indices = [i for i, v in enumerate(histo) if v == histo[root_note]]
+
+            if len(max_indices) == 1:
+                chord_candidates = [
+                    [major_scale[root_ind], major_scale[(root_ind + 2) % 7], major_scale[(root_ind + 4) % 7],
+                     major_scale[(root_ind + 6) % 7]],
+                    [major_scale[(root_ind - 2) % 7], major_scale[root_ind], major_scale[(root_ind + 2) % 7],
+                     major_scale[(root_ind + 4) % 7]],
+                    [major_scale[(root_ind - 4) % 7], major_scale[(root_ind - 2) % 7], major_scale[root_ind],
+                     major_scale[(root_ind + 2) % 7]],
+                    [major_scale[(root_ind - 6) % 7], major_scale[(root_ind - 4) % 7], major_scale[(root_ind - 2) % 7],
+                     major_scale[root_ind]]]
+
+
+                if len(notes) >= 3:
+                    max_intersect = len(set(chord_candidates[0]).intersection(set(notes[-3:])))
+                    if max_intersect < 3:
+                        for i in range(3, len(notes) + 1):
+                            for j, candidate in enumerate(chord_candidates):
+                                intersection = set(candidate).intersection(set(notes[-i:]))
+                                if len(intersection) > max_intersect:
+                                    max_intersect = len(intersection)
+                                    root_ind = (root_ind - 2 * j) % 7
+
+                            if max_intersect == 4:
+                                break
+
+            else:
+                chord_candidates = []
+                for i in max_indices:
+                    if i in major_scale:
+                        root_ind = major_scale.index(i)
+                        chord_candidates.append(
+                            [major_scale[root_ind], major_scale[(root_ind + 2) % 7], major_scale[(root_ind + 4) % 7],
+                             major_scale[(root_ind + 6) % 7]])
+
+                root_ind = major_scale.index(chord_candidates[0][0])
+                max_intersect = len(set(chord_candidates[0]).intersection(set(notes)))
+                for candidate in chord_candidates:
+                   if len(set(candidate).intersection(set(notes))) > max_intersect:
+                       root_ind = major_scale.index(candidate[0])
+
+
+            chord_name = major_notes[scale_degree][root_ind] + major_seventh_chords[root_ind]
+            print('chord:', chord_name)
+            chord_list.append(chord_name)
+
+
+        else:
+            chord_list.append('-')
+            print('no chord')
 
 
 

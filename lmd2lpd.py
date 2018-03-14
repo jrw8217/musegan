@@ -214,6 +214,7 @@ def main():
             kv_pair = converter(midi_filepath)
             if kv_pair is None:
                 continue
+            num_songs += len(kv_pair)
             midi_dict[kv_pair[0]] = kv_pair[1]
         # save the midi dict into a json file
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))

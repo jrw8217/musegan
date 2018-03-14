@@ -1,9 +1,10 @@
 # local path
 
 dataset_path: '/data1/lakh/lmd_full'
-#other path : '/home/wan/Documents/projects/musegan/test_full'
-result_path: '/data1/lakh/lmd_full_processed_ckey'
-#other path : '/home/wan/Documents/projects/data_processed/test_full_processed'
+#dataset_path : '/home/wan/Documents/projects/musegan/test_full'
+#dataset_path : '/home/wan/PycharmProjects/test/test1/TRAWXON128F1471203(Yesterday)'
+result_path: '/data1/lakh/lmd_full_processed_ckey_fixed'
+#result_path : '/home/wan/Documents/projects/data_processed/test_yesterday_bass_pianoroll'
 
 # parameters
 beat_resolution: 4
