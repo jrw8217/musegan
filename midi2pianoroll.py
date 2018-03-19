@@ -22,7 +22,7 @@ def get_key_info(pm):
 
     else:
         print('does not have any key_signature_change')
-        return 9
+        return -1
 
 def get_time_signature_info_and_arrays(pm):
     """Given a pretty_midi.PrettyMIDI class instance, return its time signature
