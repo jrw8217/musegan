@@ -1,12 +1,12 @@
 # local path
 
-dataset_path: '/data1/lakh/lmd_full'
+dataset_path: '/data1/lakh/test_melody'
 #dataset_path : '/home/wan/Documents/projects/musegan/test_full'
-#dataset_path : '/home/wan/PycharmProjects/test/test1/TRAWXON128F1471203(Yesterday)'
-result_path: '/data1/lakh/lmd_full_processed_ckey_fixed'
-#result_path : '/home/wan/Documents/projects/data_processed/test_yesterday_bass_pianoroll'
+#dataset_path : '/home/wan/PycharmProjects/test/test1/dancingqueen'
+result_path: '/data1/lakh/test_melody_processed'
+#result_path : '/home/wan/Documents/projects/data_processed/test_dancingqueen_bass_pianoroll'
 
 # parameters
 beat_resolution: 4
-multicore: 30
+multicore: 1
 link_to_msd: False

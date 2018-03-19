@@ -22,7 +22,7 @@ def get_key_info(pm):
 
     else:
         print('does not have any key_signature_change')
-        return -1
+        return 9
 
 def get_time_signature_info_and_arrays(pm):
     """Given a pretty_midi.PrettyMIDI class instance, return its time signature
@@ -140,7 +140,7 @@ def get_midi_info_and_arrays(pm, beat_resolution=4):
 
 def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=None, pm=None):
     print '-------------------------------'
-    # print 'instrument name:', instrument.name
+    print 'instrument name:', instrument.name
     """Given a pretty_midi.Instrument class instance, return the pianoroll of
     the instrument. When one of the beat_times and the tempo_array is not given,
     the pretty_midi object should be given."""
@@ -274,6 +274,7 @@ def get_piano_rolls(pm, beat_resolution=4):
 
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
+    print('instruments:', pm.instruments)
 
     key_pitch = key % 12
     # key_pitch = 5
@@ -281,11 +282,11 @@ def get_piano_rolls(pm, beat_resolution=4):
     bass_piano_roll = []
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
-
         # get the piano-roll and the onset-roll of a specific instrument
         piano_roll, onset_roll = get_piano_roll(instrument, beat_resolution=beat_resolution,
                                                 beat_times=midi_arrays['beat_times'],
                                                 tempo_array=midi_arrays['tempo_array'])
+
         if not instrument.is_drum:
             print(instrument)
             # shift piano roll to ckey
@@ -305,6 +306,9 @@ def get_piano_rolls(pm, beat_resolution=4):
             # append the piano-roll to the piano-roll list and the onset-roll list
             piano_rolls.append(new_piano_roll)
             onset_rolls.append(new_onset_roll)
+        else:
+            piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
+            onset_rolls.append(np.zeros(shape = onset_roll.shape, dtype = int))
 
         # else:
         #     piano_rolls.append(piano_roll)
