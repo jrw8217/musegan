@@ -8,5 +8,5 @@ result_path: '/data1/lakh/test_melody_processed'
 
 # parameters
 beat_resolution: 4
-multicore: 1
+multicore: 30
 link_to_msd: False
