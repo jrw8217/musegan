@@ -212,6 +212,188 @@ def get_instrument_info(instrument):
             'family_num': int(instrument.program)//8,
             'family_name': pretty_midi.program_to_instrument_class(instrument.program)}
 
+def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
+    """
+    Convert a midi file to piano-rolls of multiple tracks.
+
+    Parameters
+    ----------
+    midi_path : str
+        The path to the midi file.
+
+    Returns
+    -------
+    piano_rolls : np.ndarray of int
+        The extracted piano-rolls. The value represents the velocity. The first
+        dimension is the id of the instrument. The size is (num_instrument,
+        num_time_step, num_pitches).
+    onset_rolls : np.ndarray of bool
+        The extracted onset-rolls. The value indicates the occurence of onset
+        events. The first dimension is the id of the instrument. The size is
+        (num_instrument, num_time_step, num_pitches).
+    info_dict : dict
+        A dictionary containing extracted useful information lost during the
+        conversion of the midi file.
+            midi_arrays : dict
+                A dictionary containing informative arrays.
+                    beat_times : np.ndarray
+                        The time (in sec) of each beat
+                    downbeat_times : np.ndarray
+                        The time (in sec) of each downbeat
+                    tempo_array : np.ndarray
+                        The tempo at each time step
+                    beat_array : np.ndarray
+                        The location (time step) of beats
+                    downbeat_array : np.ndarray
+                        The location (time step) of downbeats
+            midi_info : dict
+                Contains information of the midi file, including time_signature,
+                beat and tempo info.
+            instrument_info: dict
+                Contains information of each track
+    """
+
+    # create an empty instrument dictionary to store information of each instrument
+    instrument_info = {}
+    piano_rolls = []
+    onset_rolls = []
+    # get the midi information and the beat/tempo arrays
+    midi_info, midi_arrays = get_midi_info_and_arrays(pm, beat_resolution)
+    numerators = midi_arrays['time_signature_numerators']
+    denominators = midi_arrays['time_signature_denominators']
+    for numerator, denominator in zip(numerators, denominators):
+        if numerator != 4 or denominator != 4:
+            print("not 4/4")
+            return None
+
+    # sort instruments by their program numbers
+    pm.instruments.sort(key=lambda x: x.program)
+    print('instruments:', pm.instruments)
+
+    bass_piano_roll = []
+    # iterate thorugh all instruments
+    for idx, instrument in enumerate(pm.instruments):
+        # get the piano-roll and the onset-roll of a specific instrument
+        piano_roll, onset_roll = get_piano_roll(instrument, beat_resolution=beat_resolution,
+                                                beat_times=midi_arrays['beat_times'],
+                                                tempo_array=midi_arrays['tempo_array'])
+
+        if instrument.is_drum:
+            piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
+            onset_rolls.append(np.zeros(shape = onset_roll.shape, dtype = int))
+
+        else:
+            piano_rolls.append(piano_roll)
+            onset_rolls.append(onset_roll)
+
+        # append information of current instrument to instrument dictionary
+        instrument_info[str(idx)] = get_instrument_info(instrument)
+        if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
+            # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])
+            bass_piano_roll = piano_roll
+
+    print('check end')
+    total_rolls = np.zeros_like(piano_rolls[0])
+    for piano_roll in piano_rolls:
+        total_rolls = np.add(total_rolls, piano_roll)
+        #print(total_rolls[100])
+    print(total_rolls.shape)
+    #print('total_rolls[100]:', total_rolls[100])
+
+    histo_oct = np.zeros(12)
+    histo = np.sum(total_rolls, axis = 0)
+    print(histo.shape)
+    for pitch in range(len(histo)):
+        histo_oct[pitch % 12] += histo[pitch]
+
+    print(histo_oct)
+
+    max_n = histo_oct.argsort(axis=0)[-7:]
+    max_n.sort()
+
+    print(max_n)
+
+    # get all scales for every root note
+    major = np.array([0, 2, 4, 5, 7, 9, 11], dtype=int)
+    major_scales = []
+    for i in range(0, 12):
+        major_scales.append(np.sort((np.array(major) + i) % 12))
+
+
+    minor = np.array([0, 2, 3, 5, 7, 8, 10], dtype=int)
+    minor_scales = []
+    for i in range(0, 12):
+        minor_scales.append(np.sort((np.array(minor) + i) % 12))
+
+    key = -1
+    for i, scale in enumerate(major_scales):
+        if np.array_equal(max_n, scale):
+            key = i
+
+    for i, scale in enumerate(minor_scales):
+        if np.array_equal(max_n, scale):
+            if histo[key] < histo[i]:
+                key = i + 12
+
+
+    print('key:', key)
+
+    key_pitch = key % 12
+
+    new_piano_rolls = []
+    for piano_roll in piano_rolls:
+        new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
+        for time_slice in range(piano_roll.shape[0]):  #         for pitch in range(piano_roll.shape[1]):
+             if pitch >= key_pitch:
+                    new_piano_roll[time_slice][pitch - key_pitch] = piano_roll[time_slice][pitch]
+        new_piano_rolls.append(new_piano_roll)
+
+    new_onset_rolls = []
+    for onset_roll in onset_rolls:
+        new_onset_roll = np.zeros(shape = onset_roll.shape, dtype = int)
+        for time_slice in range(onset_roll.shape[0]):
+            for pitch in range(onset_roll.shape[1]):
+                if pitch >= key_pitch:
+                    new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
+        new_onset_rolls.append(new_onset_roll)
+
+    new_bass_piano_roll = np.zeros(shape = bass_piano_roll.shape, dtype = int)
+    for time_slice in range(bass_piano_roll.shape[0]):
+        for pitch in range(bass_piano_roll.shape[1]):
+            if pitch >= key_pitch:
+                new_bass_piano_roll[time_slice][pitch - key_pitch] = bass_piano_roll[time_slice][pitch]
+
+    print('here')
+    # bass_notes_for_chords = []
+    #
+    # for i in range(0, bass_piano_roll.shape[0], 8):
+    #     mini_roll = np.sum(bass_piano_roll[i:(i + 8), :], axis = 0)
+    #
+    #     if all(mini_roll == 0):
+    #         note = -1
+    #     else:
+    #         note = np.argmax(mini_roll)
+    #
+    #     bass_notes_for_chords.append(note)
+
+    # print('bass notes:', bass_notes_for_chords)
+    # print('len:', len(bass_notes_for_chords))
+    print('key:', key)
+    key_from_signature = get_key_info(pm)
+
+    # chords = []
+    # chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
+    chords = chord_extraction_test_with_bass.find_chord_from_bass_note_and_pianorolls(0, total_rolls, bass_piano_roll)
+
+    print('chords:', chords, type(chords))
+
+    info_dict = {'midi_arrays': midi_arrays,
+                 'midi_info': midi_info,
+                 'instrument_info': instrument_info}
+
+    return piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature
+
+
 def get_piano_rolls(pm, beat_resolution=4):
     """
     Convert a midi file to piano-rolls of multiple tracks.
@@ -441,7 +623,7 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     print(midi_path)
     try:
         pm = pretty_midi.PrettyMIDI(midi_path)
-        result = get_piano_rolls(pm, beat_resolution)
+        result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
     except Exception as error:
         print(error)
         result = None

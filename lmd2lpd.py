@@ -6,6 +6,7 @@ import numpy as np
 import scipy.sparse
 from config import settings
 from midi2pianoroll import midi_to_pianorolls
+import pickle
 
 
 if settings['multicore'] > 1:
@@ -13,9 +14,7 @@ if settings['multicore'] > 1:
 
 warnings.filterwarnings('ignore')
 
-def is_four_to_four(midi_path):
-
-    return
+check_key = []
 
 def msd_id_to_dirs(msd_id):
     """Given an MSD ID, generate the path prefix.
@@ -139,12 +138,14 @@ def converter(filepath):
     storing midi info to a dictionary."""
     # get the msd_id and midi_md5
     midi_md5 = os.path.splitext(os.path.basename(filepath))[0]
+    print('midi_md5', midi_md5)
 
     if settings['link_to_msd']:
         msd_id = os.path.basename(os.path.dirname(filepath))
     # convert the midi file into piano-rolls
     try:
-        piano_rolls, onset_rolls, info_dict, chords = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
+        piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
+        check_key.append([midi_md5, key, key_from_signature])
         #numerators = info_dict['midi_arrays']['time_signature_numerators']
         #denominators = info_dict['midi_arrays']['time_signature_denominators']
         #for numerator, denominator in zip(numerators, denominators):
@@ -219,6 +220,8 @@ def main():
         # save the midi dict into a json file
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
     print("the number of songs: %d" % num_songs)
+    # print(check_key)
+    pickle.dump(check_key, open(os.path.join(settings['result_path'], 'check_key.pkl'), 'wb'))
 
 if __name__ == "__main__":
     main()
