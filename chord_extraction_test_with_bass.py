@@ -80,7 +80,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
     scale_degree = key % 12
     chord_list = []
 
-    low_piano_rolls = np.asarray([row[:] for row in piano_rolls])
+    low_piano_rolls = np.asarray([row[:(60 + scale_degree)] for row in piano_rolls])
     print(low_piano_rolls.shape)
     for i in range(0, low_piano_rolls.shape[0], 8):
         print('---------------------------', i/8, 'th chord', '---------------------------')
