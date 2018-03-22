@@ -80,7 +80,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
     scale_degree = key % 12
     chord_list = []
 
-    low_piano_rolls = np.asarray([row[:(60 + scale_degree)] for row in piano_rolls])
+    low_piano_rolls = np.asarray([row[:] for row in piano_rolls])
     print(low_piano_rolls.shape)
     for i in range(0, low_piano_rolls.shape[0], 8):
         print('---------------------------', i/8, 'th chord', '---------------------------')
@@ -96,7 +96,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
         for pitch in range(len(mini_roll)):
             histo[pitch % 12] += mini_roll[pitch]
             # print('pitch and histo:', pitch, histo)
-        # print('histo:', histo)
+        print('histo:', histo)
 
         sorted_histo = np.sort(histo, axis=0)
         nonzero_idx = sorted_histo > 0
@@ -110,7 +110,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
             bass_histo = np.zeros(12)
             for pitch in range(len(bass_mini_roll)):
                 bass_histo[pitch % 12] += bass_mini_roll[pitch]
-            # print('bass :', bass_histo)
+            print('bass :', bass_histo)
 
             if not all(bass_mini_roll == 0):
                 root_note = np.argmax(bass_histo)

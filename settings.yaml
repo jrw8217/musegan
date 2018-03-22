@@ -3,7 +3,7 @@
 dataset_path: '/data1/lakh/lmd_full'
 #dataset_path : '/home/wan/Documents/projects/musegan/test_full'
 #dataset_path : '/home/wan/PycharmProjects/test/test1/dancingqueen'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey'
+result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_full_pianoroll'
 #result_path : '/home/wan/Documents/projects/data_processed/test_dancingqueen_bass_pianoroll'
 
 # parameters
