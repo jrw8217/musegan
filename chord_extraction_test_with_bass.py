@@ -80,7 +80,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
     scale_degree = key % 12
     chord_list = []
 
-    low_piano_rolls = np.asarray([row[:(60 + scale_degree)] for row in piano_rolls])
+    low_piano_rolls = np.asarray([row[:(60+scale_degree)] for row in piano_rolls])
     print(low_piano_rolls.shape)
     for i in range(0, low_piano_rolls.shape[0], 8):
         print('---------------------------', i/8, 'th chord', '---------------------------')
@@ -115,7 +115,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
             if not all(bass_mini_roll == 0):
                 root_note = np.argmax(bass_histo)
 
-        # print('root_note: ', root_note)
+        print('root_note: ', root_note)
 
         if root_note in major_scale: # Check diatonic
             root_ind = major_scale.index(root_note)
@@ -131,19 +131,26 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
                      major_scale[(root_ind + 2) % 7]],
                     [major_scale[(root_ind - 6) % 7], major_scale[(root_ind - 4) % 7], major_scale[(root_ind - 2) % 7],
                      major_scale[root_ind]]]
-
+                # print('chord_candidate 1:', chord_candidates)
 
                 if len(notes) >= 3:
                     max_intersect = len(set(chord_candidates[0]).intersection(set(notes[-3:])))
                     if max_intersect < 3:
+                        max_candidate = 0
                         for i in range(3, len(notes) + 1):
-                            for j, candidate in enumerate(chord_candidates):
-                                intersection = set(candidate).intersection(set(notes[-i:]))
-                                if len(intersection) > max_intersect:
-                                    max_intersect = len(intersection)
-                                    root_ind = (root_ind - 2 * j) % 7
 
-                            if max_intersect == 4:
+                            for j, candidate in enumerate(chord_candidates):
+
+                                intersection = set(candidate).intersection(set(notes[-i:]))
+                                if len(intersection) > max_intersect and histo[chord_candidates[max_candidate][0]] < histo[chord_candidates[j][0]]:
+
+                                    max_candidate = j
+
+                            max_intersect = len(set(chord_candidates[max_candidate]).intersection(set(notes[-i:])))
+
+                            if max_intersect == 3:
+                                root_ind = (root_ind - 2 * max_candidate) % 7
+                                # print('max:', root_ind)
                                 break
 
             else:
@@ -154,13 +161,13 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
                         chord_candidates.append(
                             [major_scale[root_ind], major_scale[(root_ind + 2) % 7], major_scale[(root_ind + 4) % 7],
                              major_scale[(root_ind + 6) % 7]])
+                # print('chord_candidate:', chord_candidates)
 
                 root_ind = major_scale.index(chord_candidates[0][0])
                 max_intersect = len(set(chord_candidates[0]).intersection(set(notes)))
                 for candidate in chord_candidates:
                    if len(set(candidate).intersection(set(notes))) > max_intersect:
                        root_ind = major_scale.index(candidate[0])
-
 
             chord_name = major_notes[scale_degree][root_ind] + major_seventh_chords[root_ind]
             print('chord:', chord_name)

@@ -139,8 +139,8 @@ def get_midi_info_and_arrays(pm, beat_resolution=4):
     return midi_info, midi_arrays
 
 def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=None, pm=None):
-    print '-------------------------------'
-    print 'instrument name:', instrument.name
+    # print '-------------------------------'
+    # print 'instrument name:', instrument.name
     """Given a pretty_midi.Instrument class instance, return the pianoroll of
     the instrument. When one of the beat_times and the tempo_array is not given,
     the pretty_midi object should be given."""
@@ -296,13 +296,11 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     total_rolls = np.zeros_like(piano_rolls[0])
     for piano_roll in piano_rolls:
         total_rolls = np.add(total_rolls, piano_roll)
-        #print(total_rolls[100])
-    print(total_rolls.shape)
-    #print('total_rolls[100]:', total_rolls[100])
+
 
     histo_oct = np.zeros(12)
     histo = np.sum(total_rolls, axis = 0)
-    print(histo.shape)
+
     for pitch in range(len(histo)):
         histo_oct[pitch % 12] += histo[pitch]
 
@@ -345,7 +343,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
         new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
         for time_slice in range(piano_roll.shape[0]):  #         for pitch in range(piano_roll.shape[1]):
              if pitch >= key_pitch:
-                    new_piano_roll[time_slice][pitch - key_pitch] = piano_roll[time_slice][pitch]
+                    new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
         new_piano_rolls.append(new_piano_roll)
 
     new_onset_rolls = []
@@ -366,8 +364,6 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
                 new_total_rolls[time_slice][pitch - key_pitch] = total_rolls[time_slice][pitch]
 
 
-
-    print('here')
     # bass_notes_for_chords = []
     #
     # for i in range(0, bass_piano_roll.shape[0], 8):
@@ -382,7 +378,6 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     # print('bass notes:', bass_notes_for_chords)
     # print('len:', len(bass_notes_for_chords))
-    print('key:', key)
     key_from_signature = get_key_info(pm)
 
     # chords = []
@@ -580,7 +575,7 @@ def get_piano_rolls(pm, beat_resolution=4):
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
 
-    return piano_rolls, onset_rolls, info_dict, chords
+    return piano_rolls, onset_rolls, info_dict, chords, 0, 0
 
 def midi_to_pianorolls(midi_path, beat_resolution=4):
     """
