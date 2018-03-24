@@ -221,7 +221,7 @@ def main():
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
     print("the number of songs: %d" % num_songs)
     # print(check_key)
-    # pickle.dump(check_key, open(os.path.join(settings['result_path'], 'check_key.pkl'), 'wb'))
+    pickle.dump(check_key, open(os.path.join(settings['result_path'], 'check_key.pkl'), 'wb'))
 
 if __name__ == "__main__":
     main()
