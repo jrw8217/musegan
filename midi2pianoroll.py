@@ -270,7 +270,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     pm.instruments.sort(key=lambda x: x.program)
     print('instruments:', pm.instruments)
 
-    bass_piano_roll = []
+    bass_piano_roll = np.array([])
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
         # get the piano-roll and the onset-roll of a specific instrument
@@ -341,8 +341,9 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     new_piano_rolls = []
     for piano_roll in piano_rolls:
         new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
-        for time_slice in range(piano_roll.shape[0]):  #         for pitch in range(piano_roll.shape[1]):
-             if pitch >= key_pitch:
+        for time_slice in range(piano_roll.shape[0]):
+            for pitch in range(piano_roll.shape[1]):
+                if pitch >= key_pitch:
                     new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
         new_piano_rolls.append(new_piano_roll)
 
@@ -355,14 +356,19 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
                     new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
         new_onset_rolls.append(new_onset_roll)
 
-    new_bass_piano_roll = np.zeros(shape = bass_piano_roll.shape, dtype = int)
+
     new_total_rolls = np.zeros(shape = total_rolls.shape, dtype = int)
-    for time_slice in range(bass_piano_roll.shape[0]):
-        for pitch in range(bass_piano_roll.shape[1]):
+    for time_slice in range(total_rolls.shape[0]):
+        for pitch in range(total_rolls.shape[1]):
             if pitch >= key_pitch:
-                new_bass_piano_roll[time_slice][pitch - key_pitch] = bass_piano_roll[time_slice][pitch]
                 new_total_rolls[time_slice][pitch - key_pitch] = total_rolls[time_slice][pitch]
 
+    new_bass_piano_roll = np.zeros(shape=bass_piano_roll.shape, dtype=int)
+    if new_bass_piano_roll.size != 0:
+        for time_slice in range(total_rolls.shape[0]):
+            for pitch in range(total_rolls.shape[1]):
+                if pitch >= key_pitch:
+                    new_bass_piano_roll[time_slice][pitch - key_pitch] = bass_piano_roll[time_slice][pitch]
 
     # bass_notes_for_chords = []
     #
