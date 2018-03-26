@@ -16,6 +16,7 @@ warnings.filterwarnings('ignore')
 
 check_key = []
 
+
 def msd_id_to_dirs(msd_id):
     """Given an MSD ID, generate the path prefix.
     E.g. TRABCD12345678 -> A/B/C/TRABCD12345678"""
@@ -198,7 +199,7 @@ def main():
     if settings['multicore'] > 1:
         #print(midi_filepaths)
         kv_pairs = joblib.Parallel(n_jobs=settings['multicore'], verbose=5)(
-            joblib.delayed(converter)(midi_filepath) for midi_filepath in midi_filepaths)
+            joblib.delayed(converter)(midi_filepath, check_key) for midi_filepath in midi_filepaths)
         # save the midi dict into a json file
         kv_pairs = [kv_pair for kv_pair in kv_pairs if kv_pair is not None]
         num_songs += len(kv_pairs)
@@ -220,7 +221,7 @@ def main():
         # save the midi dict into a json file
         save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
     print("the number of songs: %d" % num_songs)
-    # print(check_key)
+    print(check_key[0])
     pickle.dump(check_key, open(os.path.join(settings['result_path'], 'check_key.pkl'), 'wb'))
 
 if __name__ == "__main__":
