@@ -334,6 +334,8 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
 
     print('key:', key)
+    if key == -1:
+        return None
 
     key_pitch = key % 12
 
