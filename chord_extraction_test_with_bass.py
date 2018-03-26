@@ -178,6 +178,8 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
             chord_list.append('-')
             print('no chord')
 
+    return chord_list
+
 
 
 def get_key_and_bass_note_from_midi(name, path):

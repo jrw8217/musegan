@@ -292,7 +292,6 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
             # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])
             bass_piano_roll = piano_roll
 
-    print('check end')
     total_rolls = np.zeros_like(piano_rolls[0])
     for piano_roll in piano_rolls:
         total_rolls = np.add(total_rolls, piano_roll)
@@ -396,7 +395,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
 
-    return piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature
+    return new_piano_rolls, new_onset_rolls, info_dict, chords, key, key_from_signature
 
 
 def get_piano_rolls(pm, beat_resolution=4):
