@@ -1,11 +1,11 @@
 # local path
 
-dataset_path: '/data1/lakh/test_melody'
+dataset_path: '/data1/lakh/lmd_full'
 #dataset_path : '/home/wan/PycharmProjects/test/test1/debug'
-result_path: '/data1/lakh/test_melody_processed'
+result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_jambot_key_0327'
 #result_path : '/home/wan/Documents/projects/data_processed/debugging'
 
 # parameters
 beat_resolution: 4
-multicore: 1
+multicore: 30
 link_to_msd: False
