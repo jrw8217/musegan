@@ -272,25 +272,32 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     bass_piano_roll = np.array([])
     # iterate thorugh all instruments
+    i = 0
     for idx, instrument in enumerate(pm.instruments):
         # get the piano-roll and the onset-roll of a specific instrument
         piano_roll, onset_roll = get_piano_roll(instrument, beat_resolution=beat_resolution,
                                                 beat_times=midi_arrays['beat_times'],
                                                 tempo_array=midi_arrays['tempo_array'])
+        if np.sum(piano_roll[:, 12:]) == 0:
+            continue
 
         if instrument.is_drum:
+            print(instrument.is_drum, instrument.name, instrument.program)
             piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
             onset_rolls.append(np.zeros(shape = onset_roll.shape, dtype = int))
 
         else:
+            print(np.nonzero(piano_roll))
             piano_rolls.append(piano_roll)
             onset_rolls.append(onset_roll)
 
         # append information of current instrument to instrument dictionary
-        instrument_info[str(idx)] = get_instrument_info(instrument)
-        if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
+        instrument_info[str(i)] = get_instrument_info(instrument)
+        if instrument_info[str(i)]['program_num'] > 31 and instrument_info[str(i)]['program_num'] < 40:
             # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])
             bass_piano_roll = piano_roll
+
+        i += 1
 
     total_rolls = np.zeros_like(piano_rolls[0])
     for piano_roll in piano_rolls:
@@ -346,6 +353,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
             for pitch in range(piano_roll.shape[1]):
                 if pitch >= key_pitch:
                     new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
+
         new_piano_rolls.append(new_piano_roll)
 
     new_onset_rolls = []

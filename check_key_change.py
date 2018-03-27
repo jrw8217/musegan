@@ -42,4 +42,3 @@ for midi_path in midi_filepaths:
 
 with open('key_changes.pkl', 'wb') as f:
     pickle.dump([key_change_0, key_change_1, key_change_2], f)
-    
