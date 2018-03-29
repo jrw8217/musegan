@@ -1,9 +1,9 @@
 # local path
 
 dataset_path: '/data1/lakh/lmd_full'
-#dataset_path : '/home/wan/PycharmProjects/test/test1/debug'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_jambot_key_0327'
-#result_path : '/home/wan/Documents/projects/data_processed/debugging'
+#dataset_path : '/home/wan/PycharmProjects/test/test1/key_test'
+result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_jambot_key_0329'
+#result_path : '/home/wan/Documents/projects/data_processed/key_test_processed'
 
 # parameters
 beat_resolution: 4

@@ -144,7 +144,7 @@ def converter(filepath):
     # convert the midi file into piano-rolls
     try:
         piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
-        with open('key_list.txt', 'a') as f:
+        with open('key_list_fixed.txt', 'a') as f:
             row = ','.join([midi_md5, str(key), str(key_from_signature)])
             f.write(row)
             f.write('\n')

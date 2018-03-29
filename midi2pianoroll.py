@@ -62,7 +62,6 @@ def get_beat_info_and_arrays(pm, beat_resolution=4, sort_tsc=True):
     num_beats = len(beat_times)
     incomplete_at_start = bool(downbeat_times[0] > beat_times[0])
     num_bars = len(downbeat_times) + int(incomplete_at_start)
-    print('incomplete_at_start:', incomplete_at_start, num_bars)
     # create an empty beat array and an empty downbeat array
     beat_array = np.zeros(shape=(beat_resolution*num_beats, 1), dtype=bool)
     downbeat_array = np.zeros(shape=(beat_resolution*num_beats, 1), dtype=bool)
@@ -282,12 +281,10 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
             continue
 
         if instrument.is_drum:
-            print(instrument.is_drum, instrument.name, instrument.program)
             piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
             onset_rolls.append(np.zeros(shape = onset_roll.shape, dtype = int))
 
         else:
-            print(np.nonzero(piano_roll))
             piano_rolls.append(piano_roll)
             onset_rolls.append(onset_roll)
 
@@ -336,15 +333,19 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     for i, scale in enumerate(minor_scales):
         if np.array_equal(max_n, scale):
-            if histo[key] < histo[i]:
+            if histo_oct[key] < histo_oct[i]:
                 key = i + 12
 
 
     print('key:', key)
     if key == -1:
-        return None
-
-    key_pitch = key % 12
+        new_key = get_key_info(pm)
+        if new_key == -1:
+            return None
+        else:
+            key_pitch = new_key % 12
+    else:
+        key_pitch = key % 12
 
     new_piano_rolls = []
     for piano_roll in piano_rolls:
@@ -399,7 +400,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     # chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
     chords = chord_extraction_test_with_bass.find_chord_from_bass_note_and_pianorolls(0, new_total_rolls, new_bass_piano_roll)
 
-    print('chords:', chords, type(chords))
+    # print('chords:', chords, type(chords))
 
     info_dict = {'midi_arrays': midi_arrays,
                  'midi_info': midi_info,
