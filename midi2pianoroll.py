@@ -347,6 +347,8 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     else:
         key_pitch = key % 12
 
+    print('key_pitch:', key_pitch)
+
     new_piano_rolls = []
     for piano_roll in piano_rolls:
         new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)

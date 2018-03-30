@@ -9,7 +9,7 @@ from config import settings
 from midi2pianoroll import midi_to_pianorolls
 import pickle
 
-with open('discord.pkl', 'rb') as f:
+with open('discord_fixed.pkl', 'rb') as f:
         discord = pickle.load(f)
 
 discord_midi = [x[0]+'.mid' for x in discord]
@@ -40,5 +40,5 @@ for midi_path in midi_filepaths:
     except Exception as error:
         print(error)
 
-with open('key_changes.pkl', 'wb') as f:
+with open('key_changes_fixed.pkl', 'wb') as f:
     pickle.dump([key_change_0, key_change_1, key_change_2], f)
