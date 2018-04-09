@@ -1,11 +1,11 @@
 # local path
 
 dataset_path: '/data1/lakh/lmd_full'
-#dataset_path : '/home/wan/PycharmProjects/test/test1/key_diff_test'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_jambot_key_0329'
-#result_path : '/home/wan/Documents/projects/data_processed/key_diff_test_processed'
+#dataset_path : '/home/wan/PycharmProjects/test/test1/Krumhansl_key_test'
+result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_Krumhansl_key_0409'
+#result_path : '/home/wan/Documents/projects/data_processed/Krumhansl_key_test_processed_2'
 
 # parameters
 beat_resolution: 4
-multicore: 1
+multicore: 30
 link_to_msd: False
