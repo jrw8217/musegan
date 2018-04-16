@@ -815,7 +815,9 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
         print('Krumhansl key:', key_name)
 
         pm = pretty_midi.PrettyMIDI(midi_path)
-        result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
+        # result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
+        result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
+
     except Exception as error:
         print(error)
         result = None

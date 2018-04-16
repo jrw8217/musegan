@@ -2,7 +2,8 @@
 
 dataset_path: '/data1/lakh/lmd_full'
 #dataset_path : '/home/wan/PycharmProjects/test/test1/dancingqueen'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_Krumhansl_key_0409'
+#result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_Krumhansl_key_0409'
+result_path: '/data1/lakh/memory_test'
 #result_path : '/home/wan/Documents/projects/data_processed/dancingqueen_processed'
 
 # parameters
