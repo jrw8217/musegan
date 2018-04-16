@@ -96,7 +96,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
         for pitch in range(len(mini_roll)):
             histo[pitch % 12] += mini_roll[pitch]
             # print('pitch and histo:', pitch, histo)
-        # print('histo:', histo)
+        print('histo:', histo)
 
         sorted_histo = np.sort(histo, axis=0)
         nonzero_idx = sorted_histo > 0
@@ -110,12 +110,12 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
             bass_histo = np.zeros(12)
             for pitch in range(len(bass_mini_roll)):
                 bass_histo[pitch % 12] += bass_mini_roll[pitch]
-            # print('bass :', bass_histo)
+            print('bass :', bass_histo)
 
             if not all(bass_mini_roll == 0):
                 root_note = np.argmax(bass_histo)
 
-        # print('root_note: ', root_note)
+        print('root_note: ', root_note)
 
         if root_note in major_scale: # Check diatonic
             root_ind = major_scale.index(root_note)
@@ -170,13 +170,13 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
                        root_ind = major_scale.index(candidate[0])
 
             chord_name = major_notes[scale_degree][root_ind] + major_seventh_chords[root_ind]
-            # print('chord:', chord_name)
+            print('chord:', chord_name)
             chord_list.append(chord_name)
 
 
         else:
             chord_list.append('-')
-            # print('no chord')
+            print('no chord')
 
     return chord_list
 

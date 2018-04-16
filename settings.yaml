@@ -1,11 +1,11 @@
 # local path
 
 dataset_path: '/data1/lakh/lmd_full'
-#dataset_path : '/home/wan/PycharmProjects/test/test1/Krumhansl_key_test'
+#dataset_path : '/home/wan/PycharmProjects/test/test1/dancingqueen'
 result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_Krumhansl_key_0409'
-#result_path : '/home/wan/Documents/projects/data_processed/Krumhansl_key_test_processed_2'
+#result_path : '/home/wan/Documents/projects/data_processed/dancingqueen_processed'
 
 # parameters
 beat_resolution: 4
-multicore: 30
+multicore: 15
 link_to_msd: False

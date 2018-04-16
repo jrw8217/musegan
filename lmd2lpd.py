@@ -136,8 +136,9 @@ def converter(filepath):
     piano-rolls along with other side products. Return a key value pair for
     storing midi info to a dictionary."""
     # get the msd_id and midi_md5
+    print('filepath:', filepath)
     midi_md5 = os.path.splitext(os.path.basename(filepath))[0]
-    print('midi_md5', midi_md5)
+    # print('midi_md5', midi_md5)
 
     if settings['link_to_msd']:
         msd_id = os.path.basename(os.path.dirname(filepath))
@@ -197,6 +198,10 @@ def main():
     for dirpath, subdirs, filenames in os.walk(settings['dataset_path']):
         for filename in filenames:
             if filename.endswith('.mid'):
+                print(filename)
+                if os.path.exists(os.path.join(settings['result_path'], filename[0], filename[:-4])):
+                    print('Already exists', filename)
+                    continue
                 midi_filepaths.append(os.path.join(dirpath, filename))
 
     # parallelize the converter if in multicore mode

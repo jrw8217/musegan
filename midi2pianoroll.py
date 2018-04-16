@@ -5,12 +5,10 @@ import pretty_midi
 import chord_extraction_test_with_bass
 import music21
 
-key_dict = {music21.key.Key('C'): 0, music21.key.Key('C#'): 1, music21.key.Key('D-'): 1, music21.key.Key('D'): 2,
-            music21.key.Key('D#'): 3,
-            music21.key.Key('E-'): 3, music21.key.Key('E'): 4, music21.key.Key('F'): 5, music21.key.Key('F#'): 6,
-            music21.key.Key('G-'): 6, music21.key.Key('G'): 7, music21.key.Key('G#'): 8,
-            music21.key.Key('A-'): 8, music21.key.Key('A'): 9, music21.key.Key('A#'): 10, music21.key.Key('B-'): 10,
-            music21.key.Key('B'): 11
+key_dict = {'Cmajor': 0, 'C#major': 1, 'D-major': 1, 'Dmajor': 2, 'D#major': 3,
+            'E-major': 3, 'Emajor': 4, 'Fmajor': 5, 'F#major': 6,
+            'G-major': 6, 'Gmajor': 7, 'G#major': 8,
+            'A-major': 8, 'Amajor': 9, 'A#major': 10, 'B-major': 10, 'Bmajor': 11
             }
 
 def merge_dicts(*dict_args):
@@ -467,7 +465,7 @@ def get_piano_rolls_with_Krumhansl_key(pm, key, beat_resolution=4):
         key_pitch = key_dict[key]
 
     else:
-        print('Minor key')
+        print('Minor key', key)
         return None
 
 
@@ -813,10 +811,11 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     try:
         score = music21.converter.parse(midi_path)
         key = score.analyze('Krumhansl')
-        print('Krumhansl key:', key)
+        key_name = key.tonic.name + key.type
+        print('Krumhansl key:', key_name)
 
         pm = pretty_midi.PrettyMIDI(midi_path)
-        result = get_piano_rolls_with_Krumhansl_key(pm, key, beat_resolution)
+        result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
     except Exception as error:
         print(error)
         result = None
