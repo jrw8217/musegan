@@ -809,10 +809,10 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     print('-------------------------------------------------------------------------')
     print(midi_path)
     try:
-        score = music21.converter.parse(midi_path)
-        key = score.analyze('Krumhansl')
-        key_name = key.tonic.name + key.type
-        print('Krumhansl key:', key_name)
+        # score = music21.converter.parse(midi_path)
+        # key = score.analyze('Krumhansl')
+        # key_name = key.tonic.name + key.type
+        # print('Krumhansl key:', key_name)
 
         pm = pretty_midi.PrettyMIDI(midi_path)
         # result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
