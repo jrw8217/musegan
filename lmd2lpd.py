@@ -204,6 +204,8 @@ def main():
                     continue
                 midi_filepaths.append(os.path.join(dirpath, filename))
 
+    midi_filepaths.reverse()
+
     # parallelize the converter if in multicore mode
     if settings['multicore'] > 1:
         #print(midi_filepaths)
