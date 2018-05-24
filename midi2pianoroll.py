@@ -3,7 +3,7 @@
 import numpy as np
 import pretty_midi
 import chord_extraction_test_with_bass
-import music21
+# import music21
 
 key_dict = {'Cmajor': 0, 'C#major': 1, 'D-major': 1, 'Dmajor': 2, 'D#major': 3,
             'E-major': 3, 'Emajor': 4, 'Fmajor': 5, 'F#major': 6,
@@ -356,6 +356,8 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     print('key_pitch:', key_pitch)
 
+    # key_pitch = 0
+
 
 
     new_piano_rolls = []
@@ -410,7 +412,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     # chords = []
     # chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
-    chords = chord_extraction_test_with_bass.find_chord_from_bass_note_and_pianorolls(0, new_total_rolls, new_bass_piano_roll)
+    chords = chord_extraction_test_with_bass.find_triad_chord_from_bass_note_and_pianorolls(0, new_total_rolls, new_bass_piano_roll)
 
     # print('chords:', chords, type(chords))
 
@@ -809,16 +811,16 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
     print('-------------------------------------------------------------------------')
     print(midi_path)
     try:
-        score = music21.converter.parse(midi_path)
-        key = score.analyze('Krumhansl')
-        key_name = key.tonic.name + key.type
-        print('Krumhansl key:', key_name)
-        del score
+        # score = music21.converter.parse(midi_path)
+        # key = score.analyze('Krumhansl')
+        # key_name = key.tonic.name + key.type
+        # print('Krumhansl key:', key_name)
+        # del score
 
         pm = pretty_midi.PrettyMIDI(midi_path)
-        result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
-        # result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
-        del key
+        # result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
+        result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
+        # del key
 
     except Exception as error:
         print(error)
