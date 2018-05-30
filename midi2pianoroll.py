@@ -384,14 +384,14 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     for time_slice in range(total_rolls.shape[0]):
         for pitch in range(total_rolls.shape[1]):
             if pitch >= key_pitch:
-                new_total_rolls[time_slice][pitch - key_pitch] = total_rolls[time_slice][pitch]
+                new_total_rolls[time_slice][pitch - key_pitch] = 1 if total_rolls[time_slice][pitch] != 0 else 0
 
     new_bass_piano_roll = np.zeros(shape=bass_piano_roll.shape, dtype=int)
     if new_bass_piano_roll.size != 0:
         for time_slice in range(total_rolls.shape[0]):
             for pitch in range(total_rolls.shape[1]):
                 if pitch >= key_pitch:
-                    new_bass_piano_roll[time_slice][pitch - key_pitch] = bass_piano_roll[time_slice][pitch]
+                    new_bass_piano_roll[time_slice][pitch - key_pitch] = 1 if bass_piano_roll[time_slice][pitch] != 0 else 0
 
     # bass_notes_for_chords = []
     #
@@ -412,7 +412,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     # chords = []
     # chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
-    chords = chord_extraction_test_with_bass.find_triad_chord_from_bass_note_and_pianorolls(0, new_total_rolls, new_bass_piano_roll)
+    chords = chord_extraction_test_with_bass.find_triad_chord_include_nondiatonic(0, new_total_rolls, new_bass_piano_roll)
 
     # print('chords:', chords, type(chords))
 

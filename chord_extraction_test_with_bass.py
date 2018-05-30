@@ -5,6 +5,15 @@ import sys
 import pickle
 
 
+roots = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
+triad_chord_name_to_note = {}
+
+for i, root in enumerate(roots):
+    triad_chord_name_to_note[root] = [i, (i + 4) % 12, (i + 7) % 12]
+    triad_chord_name_to_note[root + 'm'] = [i, (i + 3) % 12, (i + 7) % 12]
+    triad_chord_name_to_note[root + 'dim'] = [i, (i + 3) % 12, (i + 6) % 12]
+
+
 
 
 major_scale = [0, 2, 4, 5, 7, 9, 11]
@@ -16,6 +25,11 @@ major_notes = [['C', 'D', 'E', 'F', 'G', 'A', 'B'], ['Db', 'Eb', 'F', 'Gb', 'Ab'
                ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'], ['G', 'A', 'B', 'C', 'D', 'E', 'F#'], ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'],
                ['A' ,'B', 'C#', 'D', 'E', 'F#', 'G#'], ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'], ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']
                ]
+
+major_triad_diatonic = []
+for _, scale in enumerate(major_notes):
+    diatonics = [root + major_triad_chords[i] for i, root in enumerate(scale)]
+    major_triad_diatonic.append(diatonics)
 
 
 minor_scale = [0, 2, 3, 5, 7, 8, 10]
@@ -81,7 +95,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
     chord_list = []
 
     low_piano_rolls = np.asarray([row[:(60+scale_degree)] for row in piano_rolls])
-    print(low_piano_rolls.shape)
+
     for i in range(0, low_piano_rolls.shape[0], 8):
         # print('---------------------------', i/8, 'th chord', '---------------------------')
         mini_roll = np.sum(low_piano_rolls[i:(i + 8), :], axis = 0)
@@ -167,6 +181,7 @@ def find_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.array([])
                 max_intersect = len(set(chord_candidates[0]).intersection(set(notes)))
                 for candidate in chord_candidates:
                    if len(set(candidate).intersection(set(notes))) > max_intersect:
+                       max_intersect = len(set(candidate).intersection(set(notes)))
                        root_ind = major_scale.index(candidate[0])
 
             chord_name = major_notes[scale_degree][root_ind] + major_seventh_chords[root_ind]
@@ -185,7 +200,7 @@ def find_triad_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.arr
     chord_list = []
 
     low_piano_rolls = np.asarray([row[:(61+scale_degree)] for row in piano_rolls])
-    print(low_piano_rolls.shape)
+
     for i in range(0, low_piano_rolls.shape[0], 8):
         # print('---------------------------', i/8, 'th chord', '---------------------------')
         mini_roll = np.sum(low_piano_rolls[i:(i + 8), :], axis = 0)
@@ -193,7 +208,7 @@ def find_triad_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.arr
 
         if all(mini_roll == 0):
             chord_list.append('-')
-            # print('no chord since no onset')
+            # print('no chord since no onset under 60')
             continue
 
         histo = np.zeros(12)
@@ -283,6 +298,128 @@ def find_triad_chord_from_bass_note_and_pianorolls(key = 0, piano_rolls = np.arr
         else:
             chord_list.append('-')
             print('no chord')
+
+    return chord_list
+
+
+def find_triad_chord_include_nondiatonic(key = 0, piano_rolls = np.array([]), bass_piano_roll = np.array([])):
+    scale_degree = key % 12
+    chord_list = []
+
+    low_piano_rolls = np.asarray([row[:(61+scale_degree)] for row in piano_rolls])
+
+    for i in range(0, low_piano_rolls.shape[0], 8):
+        print('---------------------------', i/8, 'th chord', '---------------------------')
+        mini_roll = np.sum(low_piano_rolls[i:(i + 8), :], axis = 0)
+        # print('mini_roll:', mini_roll)
+
+        if all(mini_roll == 0):
+            chord_list.append('-')
+            print('no chord since no onset under 60')
+            continue
+
+        histo = np.zeros(12)
+        for pitch in range(len(mini_roll)):
+            histo[pitch % 12] += mini_roll[pitch]
+            # print('pitch and histo:', pitch, histo)
+        print('histo:', histo)
+
+        sorted_histo = np.sort(histo, axis=0)
+        nonzero_idx = sorted_histo > 0
+        notes = np.argsort(histo, axis=0)
+        notes = notes[nonzero_idx]
+        root_note = notes[-1]
+
+        if np.array(bass_piano_roll).size:
+            bass_mini_roll = np.sum(bass_piano_roll[i:(i + 8), :], axis = 0)
+            # print('bass_mini_roll:', bass_mini_roll)
+            bass_histo = np.zeros(12)
+            for pitch in range(len(bass_mini_roll)):
+                bass_histo[pitch % 12] += bass_mini_roll[pitch]
+            print('bass :', bass_histo)
+
+            if not all(bass_mini_roll == 0):
+                root_note = np.argmax(bass_histo)
+
+        print('root_note: ', root_note)
+
+
+        max_indices = [i for i, v in enumerate(histo) if v >= histo[root_note]]
+        print(max_indices)
+
+        if len(max_indices) == 1:
+            chord_candidates = [
+                ([root_note, (root_note + 4) % 12, (root_note + 7) % 12], roots[root_note]),
+                ([root_note, (root_note + 3) % 12, (root_note + 7) % 12], roots[root_note] + 'm'),
+                ([root_note, (root_note + 3) % 12, (root_note + 6) % 12], roots[root_note] + 'dim'),
+                ([(root_note - 4) % 12, root_note, (root_note + 3) % 12], roots[(root_note - 4) % 12]),
+                ([(root_note - 3) % 12, root_note, (root_note + 4) % 12], roots[(root_note - 3) % 12] + 'm'),
+                ([(root_note - 3) % 12, root_note, (root_note + 3) % 12], roots[(root_note - 3) % 12] + 'dim'),
+                ([(root_note - 7) % 12, (root_note - 3) % 12, root_note], roots[(root_note - 7) % 12]),
+                ([(root_note - 7) % 12, (root_note - 4) % 12, root_note], roots[(root_note - 7) % 12] + 'm'),
+                ([(root_note - 6) % 12, (root_note - 3) % 12, root_note], roots[(root_note - 6) % 12] + 'dim')
+            ]
+        else:
+            # print('no inversion')
+            chord_candidates = []
+            for i in max_indices:
+                    chord_candidates += [
+                        ([i, (i + 4) % 12, (i + 7)  % 12], roots[i]),
+                        ([i, (i + 3) % 12, (i + 7) % 12], roots[i] + 'm'),
+                        ([i, (i + 3) % 12, (i + 6) % 12], roots[i] + 'dim')
+                    ]
+
+        # print('chord_candidate:', chord_candidates)
+
+        intersect_condition = 3 if len(notes) > 2 else 2
+        # print('intersect condition:', intersect_condition)
+
+        final_chord_name = roots[root_note] + 'm' if roots[root_note] not in major_triad_diatonic[scale_degree] else roots[root_note]
+        # final_chord_name = chord_candidates[0][1]
+        # print('initial chord:', final_chord_name)
+
+        if len(notes) >= 2:
+            max_intersect = len(set(chord_candidates[0][0]).intersection(set(notes[-2:])))
+            max_candidate = chord_candidates[0]
+            if max_intersect <= intersect_condition:
+                for i in range(2, len(notes) + 1):
+                    for j, candidate in enumerate(chord_candidates):
+                        # print('max_intersect:', max_intersect)
+                        intersection = set(candidate[0]).intersection(set(notes[-i:]))
+                        # print('intersect:', intersection)
+                        if len(intersection) > max_intersect:
+                            # print('> case, ', candidate, notes[-i:])
+                            max_candidate = candidate
+                            max_intersect = len(intersection)
+
+                        elif len(intersection) == max_intersect:
+                            # print('== case, ', candidate, notes[-i:])
+                            if max_candidate[1] not in major_triad_diatonic[scale_degree] and candidate[1] in major_triad_diatonic[scale_degree]:
+                                max_candidate = candidate
+                                # print('change to ', candidate)
+
+                    # max_intersect = len(set(chord_candidates[max_candidate]).intersection(set(notes[-i:])))
+                    # print(chord_candidates[max_candidate], notes[-i:])
+                    # print('final max:', max_intersect)
+
+                    if max_intersect == intersect_condition:
+                        break
+
+            final_chord_name = max_candidate[1]
+            # print('chord_candidate:', chord_candidates)
+
+            # root_ind = major_scale.index(chord_candidates[0][0])
+            # max_intersect = len(set(chord_candidates[0]).intersection(set(notes)))
+            # for candidate in chord_candidates:
+            #    if len(set(candidate).intersection(set(notes))) > max_intersect:
+            #        max_intersect = len(set(candidate).intersection(set(notes)))
+            #        root_ind = major_scale.index(candidate[0])
+
+
+        print('final chord:', final_chord_name)
+        chord_list.append(final_chord_name)
+
+
 
     return chord_list
 
