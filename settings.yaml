@@ -2,7 +2,7 @@
 
 dataset_path: '/data1/lakh/lmd_full'
 #dataset_path : '/home/wan/PycharmProjects/test/test1/dancingqueen'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_triad_chord_include_nondiatonic_0530'
+result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_triad_chord_include_nondiatonic_0530_test'
 #result_path : '/home/wan/Documents/projects/data_processed/dancingqueen_processed_triad_include_nondiatonic'
 
 
