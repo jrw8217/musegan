@@ -1,12 +1,12 @@
 # local path
 
-dataset_path: '/data1/lakh/lmd_full'
-#dataset_path : '/home/wan/PycharmProjects/test/test1/dancingqueen'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_triad_chord_include_nondiatonic_0530_test'
-#result_path : '/home/wan/Documents/projects/data_processed/dancingqueen_processed_triad_include_nondiatonic'
+dataset_path: '/data1/lakh/CGAmF'
+#dataset_path : '/home/wan/PycharmProjects/test/test1/CGAmF'
+result_path: '/data1/lakh/CGAmF_preprocessed'
+#result_path : '/home/wan/Documents/projects/data_processed/CGAmF_preprocessed'
 
 
 # parameters
 beat_resolution: 4
-multicore: 15
+multicore: 1
 link_to_msd: False

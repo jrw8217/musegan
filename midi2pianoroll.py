@@ -270,7 +270,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     for numerator, denominator in zip(numerators, denominators):
         if numerator != 4 or denominator != 4:
             print("not 4/4")
-            return None
+            # return None
 
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
@@ -482,7 +482,7 @@ def get_piano_rolls_with_Krumhansl_key(pm, key, beat_resolution=4):
     for numerator, denominator in zip(numerators, denominators):
         if numerator != 4 or denominator != 4:
             print("not 4/4")
-            return None
+            # return None
 
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
