@@ -145,12 +145,12 @@ def converter(filepath):
     # convert the midi file into piano-rolls
     try:
         piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
-        with open('key_list_fixed.txt', 'a') as f:
-            row = ','.join([midi_md5, str(key), str(key_from_signature)])
-            f.write(row)
-            f.write('\n')
-
-        print('write finish')
+        # with open('key_list_fixed.txt', 'a') as f:
+        #     row = ','.join([midi_md5, str(key), str(key_from_signature)])
+        #     f.write(row)
+        #     f.write('\n')
+        #
+        # print('write finish')
 
         #numerators = info_dict['midi_arrays']['time_signature_numerators']
         #denominators = info_dict['midi_arrays']['time_signature_denominators']
@@ -172,18 +172,18 @@ def converter(filepath):
     make_sure_path_exists(result_midi_dir)
 
     print("save npz")
-    save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
+    # save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
     save_npz(os.path.join(result_midi_dir, 'onset_rolls.npz'), sparse_matrices=onset_rolls)
-    save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)
+    # save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)
 
     # print("additional save")
     # save the midi arrays into files
-    sparse_matrices_keys = ['tempo_array', 'beat_array', 'downbeat_array']
-    sparse_matrices = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key in sparse_matrices_keys}
-    arrays = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key not in sparse_matrices_keys}
-    save_npz(os.path.join(result_midi_dir, 'arrays.npz'), arrays=arrays, sparse_matrices=sparse_matrices)
+    # sparse_matrices_keys = ['tempo_array', 'beat_array', 'downbeat_array']
+    # sparse_matrices = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key in sparse_matrices_keys}
+    # arrays = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key not in sparse_matrices_keys}
+    # save_npz(os.path.join(result_midi_dir, 'arrays.npz'), arrays=arrays, sparse_matrices=sparse_matrices)
     # save the instrument dictionary into a json file
-    save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
+    # save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
     # add a key value pair storing the midi_md5 of the selected midi file if link_to_msd is set True
     if settings['link_to_msd']:
         return (msd_id, {midi_md5: info_dict['midi_info']})
@@ -199,9 +199,9 @@ def main():
         for filename in filenames:
             if filename.endswith('.mid'):
                 print(filename)
-                if os.path.exists(os.path.join(settings['result_path'], filename[0], filename[:-4])):
-                    print('Already exists', filename)
-                    continue
+                # if os.path.exists(os.path.join(settings['result_path'], filename[0], filename[:-4])):
+                #     print('Already exists', filename)
+                #     continue
                 midi_filepaths.append(os.path.join(dirpath, filename))
 
     midi_filepaths.reverse()
@@ -219,7 +219,7 @@ def main():
             midi_dict[key] = {}
         for kv_pair in kv_pairs:
             midi_dict[kv_pair[0]].update(kv_pair[1])
-        save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
+        # save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
     else:
         midi_dict = {}
         for midi_filepath in midi_filepaths:
@@ -230,7 +230,7 @@ def main():
             num_songs += len(kv_pair)
             midi_dict[kv_pair[0]] = kv_pair[1]
         # save the midi dict into a json file
-        save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
+        # save_dict_to_json(midi_dict, os.path.join(settings['result_path'], 'midis.json'))
     print("the number of songs: %d" % num_songs)
 
 if __name__ == "__main__":
