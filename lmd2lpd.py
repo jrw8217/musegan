@@ -172,8 +172,8 @@ def converter(filepath):
     make_sure_path_exists(result_midi_dir)
 
     print("save npz")
-    # save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
-    save_npz(os.path.join(result_midi_dir, 'onset_rolls.npz'), sparse_matrices=onset_rolls)
+    save_npz(os.path.join(result_midi_dir, 'piano_rolls.npz'), sparse_matrices=piano_rolls)
+    # save_npz(os.path.join(result_midi_dir, 'onset_rolls.npz'), sparse_matrices=onset_rolls)
     # save_npz(os.path.join(result_midi_dir, 'chords.npz'), arrays=chords)
 
     # print("additional save")

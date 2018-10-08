@@ -2,7 +2,7 @@
 
 dataset_path: '/data1/lakh/lmd_full'
 #dataset_path : '/home/wan/Documents/projects/data/CGAmF'
-result_path: '/data1/lakh/new_lmd_full_processed_ckey_with_triad_chord_include_nondiatonic_melody_onset_added_0719'
+result_path: '/data1/lakh/new_lmd_full_processed'
 #result_path : '/home/wan/Documents/projects/data_processed/CGAmF_preprocessed'
 
 

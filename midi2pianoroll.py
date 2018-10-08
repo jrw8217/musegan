@@ -625,10 +625,10 @@ def get_piano_rolls(pm, beat_resolution=4):
     """
 
     # Get key from key_signature_changes
-    key = get_key_info(pm)
-
-    if key == -1 or key > 11:
-        return None
+    # key = get_key_info(pm)
+    #
+    # if key == -1 or key > 11:
+    #     return None
 
     # create an empty instrument dictionary to store information of each instrument
     instrument_info = {}
@@ -647,7 +647,7 @@ def get_piano_rolls(pm, beat_resolution=4):
     pm.instruments.sort(key=lambda x: x.program)
     print('instruments:', pm.instruments)
 
-    key_pitch = key % 12
+    key_pitch = 0
     # key_pitch = 5
     print('original key:', key_pitch)
     bass_piano_roll = []
@@ -688,15 +688,15 @@ def get_piano_rolls(pm, beat_resolution=4):
         # append information of current instrument to instrument dictionary
         instrument_info[str(idx)] = get_instrument_info(instrument)
 
-        if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
-            # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])
-            bass_piano_roll = new_piano_roll
+        # if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
+        #     # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])
+        #     bass_piano_roll = new_piano_roll
 
 
-    total_rolls = np.zeros_like(piano_rolls[0])
-    for piano_roll in piano_rolls:
-        total_rolls = np.add(total_rolls, piano_roll)
-        #print(total_rolls[100])
+    # total_rolls = np.zeros_like(piano_rolls[0])
+    # for piano_roll in piano_rolls:
+    #     total_rolls = np.add(total_rolls, piano_roll)
+    #     #print(total_rolls[100])
 
     #print('total_rolls[100]:', total_rolls[100])
 
@@ -753,19 +753,19 @@ def get_piano_rolls(pm, beat_resolution=4):
 
     # print('bass notes:', bass_notes_for_chords)
     # print('len:', len(bass_notes_for_chords))
-    print('key:', key)
+    # print('key:', key)
 
     # chords = []
     # chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
-    chords = chord_extraction_test_with_bass.find_chord_from_bass_note_and_pianorolls(0, total_rolls, bass_piano_roll)
+    # chords = chord_extraction_test_with_bass.find_chord_from_bass_note_and_pianorolls(0, total_rolls, bass_piano_roll)
 
-    print('chords:', chords, type(chords))
+    # print('chords:', chords, type(chords))
 
     info_dict = {'midi_arrays': midi_arrays,
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
 
-    return piano_rolls, onset_rolls, info_dict, chords, 0, 0
+    return piano_rolls, onset_rolls, info_dict, None, 0, 0
 
 def midi_to_pianorolls(midi_path, beat_resolution=4):
     """
@@ -819,10 +819,12 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
 
         pm = pretty_midi.PrettyMIDI(midi_path)
         # result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
-        result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
+        # result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
+        result = get_piano_rolls(pm, beat_resolution)
         # del key
 
     except Exception as error:
+        print("error at ", midi_path)
         print(error)
         result = None
     return result
