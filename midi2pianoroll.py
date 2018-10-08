@@ -645,11 +645,11 @@ def get_piano_rolls(pm, beat_resolution=4):
 
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
-    print('instruments:', pm.instruments)
+    # print('instruments:', pm.instruments)
 
     key_pitch = 0
     # key_pitch = 5
-    print('original key:', key_pitch)
+    # print('original key:', key_pitch)
     bass_piano_roll = []
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
@@ -659,24 +659,24 @@ def get_piano_rolls(pm, beat_resolution=4):
                                                 tempo_array=midi_arrays['tempo_array'])
 
         if not instrument.is_drum:
-            print(instrument)
+            # print(instrument)
             # shift piano roll to ckey
-            new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
-            for time_slice in range(piano_roll.shape[0]):
-                for pitch in range(piano_roll.shape[1]):
-                    if pitch >= key_pitch:
-                        new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
-
-
-            new_onset_roll = np.zeros(shape=onset_roll.shape, dtype=int)
-            for time_slice in range(onset_roll.shape[0]):
-                for pitch in range(onset_roll.shape[1]):
-                    if pitch >= key_pitch:
-                        new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
+            # new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
+            # for time_slice in range(piano_roll.shape[0]):
+            #     for pitch in range(piano_roll.shape[1]):
+            #         if pitch >= key_pitch:
+            #             new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
+            #
+            #
+            # new_onset_roll = np.zeros(shape=onset_roll.shape, dtype=int)
+            # for time_slice in range(onset_roll.shape[0]):
+            #     for pitch in range(onset_roll.shape[1]):
+            #         if pitch >= key_pitch:
+            #             new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
 
             # append the piano-roll to the piano-roll list and the onset-roll list
-            piano_rolls.append(new_piano_roll)
-            onset_rolls.append(new_onset_roll)
+            piano_rolls.append(piano_roll)
+            onset_rolls.append(onset_roll)
         else:
             piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
             onset_rolls.append(np.zeros(shape = onset_roll.shape, dtype = int))
