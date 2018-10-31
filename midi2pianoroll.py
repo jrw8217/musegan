@@ -661,11 +661,11 @@ def get_piano_rolls(pm, beat_resolution=4):
         if not instrument.is_drum:
             # print(instrument)
             # shift piano roll to ckey
-            # new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
-            # for time_slice in range(piano_roll.shape[0]):
-            #     for pitch in range(piano_roll.shape[1]):
-            #         if pitch >= key_pitch:
-            #             new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
+            new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
+            for time_slice in range(piano_roll.shape[0]):
+                for pitch in range(piano_roll.shape[1]):
+                    if pitch >= key_pitch:
+                        new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
             #
             #
             # new_onset_roll = np.zeros(shape=onset_roll.shape, dtype=int)
@@ -675,7 +675,7 @@ def get_piano_rolls(pm, beat_resolution=4):
             #             new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
 
             # append the piano-roll to the piano-roll list and the onset-roll list
-            piano_rolls.append(piano_roll)
+            piano_rolls.append(new_piano_roll)
             onset_rolls.append(onset_roll)
         else:
             piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
