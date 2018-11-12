@@ -203,7 +203,7 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
 
             # print 'end idx:', end_idx
             # set values to the piano-roll and the onset-roll matrix
-            piano_roll[start_idx:(end_idx-1), note.pitch] = note.velocity
+            piano_roll[start_idx:(end_idx), note.pitch] = note.velocity
             if start_idx < onset_roll.shape[0]:
                 onset_roll[start_idx, note.pitch] = True
     return piano_roll, onset_roll
