@@ -645,7 +645,7 @@ def get_piano_rolls(pm, beat_resolution=4):
         if numerator != 4 or denominator != 4:
             print("numerator:", numerator, "denominator:", denominator)
             print("not 4/4")
-            return None
+            # return None
 
     # sort instruments by their program numbers
     pm.instruments.sort(key=lambda x: x.program)
