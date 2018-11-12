@@ -639,6 +639,10 @@ def get_piano_rolls(pm, beat_resolution=4):
     # get the midi information and the beat/tempo arrays
     midi_info, midi_arrays = get_midi_info_and_arrays(pm, beat_resolution)
     print(midi_arrays['tempi'])
+    if midi_arrays['tempi'][0] != 120.0:
+        print("not 120 bpm!")
+        return None
+    
     numerators = midi_arrays['time_signature_numerators']
     denominators = midi_arrays['time_signature_denominators']
     for numerator, denominator in zip(numerators, denominators):
