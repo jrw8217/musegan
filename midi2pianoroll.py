@@ -269,7 +269,9 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     denominators = midi_arrays['time_signature_denominators']
     for numerator, denominator in zip(numerators, denominators):
         if numerator != 4 or denominator != 4:
-            print("not 4/4")
+            print("numerator:", numerator)
+            print("denominator:", denominator)
+            print("not 4/4!!")
             # return None
 
     # sort instruments by their program numbers
@@ -636,10 +638,12 @@ def get_piano_rolls(pm, beat_resolution=4):
     onset_rolls = []
     # get the midi information and the beat/tempo arrays
     midi_info, midi_arrays = get_midi_info_and_arrays(pm, beat_resolution)
+    print(midi_arrays['tempi'])
     numerators = midi_arrays['time_signature_numerators']
     denominators = midi_arrays['time_signature_denominators']
     for numerator, denominator in zip(numerators, denominators):
         if numerator != 4 or denominator != 4:
+            print("numerator:", numerator, "denominator:", denominator)
             print("not 4/4")
             return None
 

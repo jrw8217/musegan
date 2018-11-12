@@ -1,9 +1,9 @@
 # local path
 
-dataset_path: '/data1/lakh/lmd_full'
-#dataset_path : '/home/wan/Documents/projects/data/CGAmF'
-result_path: '/data1/lakh/new_lmd_full_processed_2'
-#result_path : '/home/wan/Documents/projects/data_processed/CGAmF_preprocessed'
+dataset_path: '/home/jrw8217/IAML/IAML_project_3/test'
+#dataset_path : '/home/wan/Documents/projects/data/test_chord'
+result_path: '/home/jrw8217/IAML/IAML_project_3/test_processed'
+#result_path : '/home/wan/Documents/projects/data_preprocessed/test_chord_preprocessed'
 
 
 # parameters
