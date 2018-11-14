@@ -4,6 +4,7 @@ import numpy as np
 import pretty_midi
 import chord_extraction_test_with_bass
 # import music21
+import pickle
 
 key_dict = {'Cmajor': 0, 'C#major': 1, 'D-major': 1, 'Dmajor': 2, 'D#major': 3,
             'E-major': 3, 'Emajor': 4, 'Fmajor': 5, 'F#major': 6,
@@ -144,7 +145,7 @@ def get_midi_info_and_arrays(pm, beat_resolution=4):
 
     return midi_info, midi_arrays
 
-def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=None, pm=None):
+def get_piano_roll(instrument, numerators, denominators, beat_resolution=4, beat_times=None, tempo_array=None, pm=None):
     # print '-------------------------------'
     # print 'instrument name:', instrument.name
     """Given a pretty_midi.Instrument class instance, return the pianoroll of
@@ -152,7 +153,8 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
     the pretty_midi object should be given."""
     if beat_times is None:
         beat_start_time = pm.time_signature_changes[0].time if pm.time_signature_changes else 0.0
-        beat_times = pm.get_beats(beat_start_time)
+        # beat_times = pm.get_beats(beat_start_time)
+        beat_time = pm.get_beats(beat_start_time)[-1]
     if tempo_array is None:
         _, tempo_array = get_tempo_info_and_arrays(pm, beat_times)
     num_beats = len(beat_times)
@@ -162,6 +164,7 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
     # print beat_times
     # print tempo_array
     # calculate pixel per beat
+
     ppbeat = beat_resolution
     hppbeat = beat_resolution/2
     # iterate through notes
@@ -169,24 +172,26 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
         if note.end < beat_times[0]:
             continue
         else:
-            # print '----------------------------'
-            # print 'note start:', note.start, note.pitch
+            print '----------------------------'
+            print('beat time:', beat_times[10:])
+            print 'note start:', note.start, note.pitch
             # find the corresponding index of the note on event
             if note.start >= beat_times[0]:
                 start_beat = np.searchsorted(beat_times, note.start, side='right') - 1
                 start_loc = (note.start - beat_times[start_beat])
                 # print 'start loc1', start_loc
                 # print 'tempo array', tempo_array[int(start_beat*ppbeat)]
-                start_loc = (tempo_array[int(start_beat*ppbeat)] / 60.0) * start_loc
+                start_loc = 8 * start_loc
+                # start_loc = (tempo_array[int(start_beat*ppbeat)] / 60.0) * start_loc
             else:
                 start_beat = 0
                 start_loc = [0.0]
-            # print 'start beat:', start_beat
-            # print 'start loc:', start_loc, start_loc * ppbeat
+            print 'start beat:', start_beat
+            print 'start loc:', start_loc, start_loc * ppbeat
             # if np.isclose(start_loc, [1], rtol=1e-03):
             #     start_loc = [1]
             start_idx = int(start_beat*ppbeat) + int(round(start_loc*ppbeat))
-            # print 'start idx:', start_idx
+            print 'start idx:', start_idx
             # find the corresponding index of the note off event
             if instrument.is_drum:
                 # set note length to minimal (32th notes) for drums
@@ -194,18 +199,20 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
             else:
                 end_beat = np.searchsorted(beat_times, note.end, side='right') - 1
                 end_loc = (note.end - beat_times[end_beat])
-                end_loc = end_loc * tempo_array[int(end_beat*ppbeat)] / 60.0
-                # print 'end loc:', end_loc
+                end_loc = end_loc * 8 / 60.0
+                # end_loc = end_loc * tempo_array[int(end_beat*ppbeat)] / 60.0
+                print 'end loc:', end_loc
                 end_idx = int(end_beat*ppbeat) + int(round(end_loc*ppbeat))
                 # make sure the note length is larger than minimum note length
                 if end_idx - start_idx < 2:
                     end_idx = start_idx + 2
 
-            # print 'end idx:', end_idx
+            print 'end idx:', end_idx
             # set values to the piano-roll and the onset-roll matrix
             piano_roll[start_idx:(end_idx), note.pitch] = note.velocity
             if start_idx < onset_roll.shape[0]:
                 onset_roll[start_idx, note.pitch] = True
+
     return piano_roll, onset_roll
 
 def get_instrument_info(instrument):
@@ -642,7 +649,7 @@ def get_piano_rolls(pm, beat_resolution=4):
     if midi_arrays['tempi'][0] != 120.0:
         print("not 120 bpm!")
         return None
-    
+
     numerators = midi_arrays['time_signature_numerators']
     denominators = midi_arrays['time_signature_denominators']
     for numerator, denominator in zip(numerators, denominators):
@@ -662,8 +669,15 @@ def get_piano_rolls(pm, beat_resolution=4):
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
         # get the piano-roll and the onset-roll of a specific instrument
-        piano_roll, onset_roll = get_piano_roll(instrument, beat_resolution=beat_resolution,
-                                                beat_times=midi_arrays['beat_times'],
+        last_beat_time = midi_arrays['beat_times'][-1]
+        beat_times = [0.]
+        while beat_times[-1] < last_beat_time:
+            beat_times.append(beat_times[-1] + 0.125)
+
+
+        piano_roll, onset_roll = get_piano_roll(instrument, numerators, denominators, beat_resolution=1,
+                                                # beat_times=midi_arrays['beat_times'],
+                                                beat_times=beat_times,
                                                 tempo_array=midi_arrays['tempo_array'])
 
         if not instrument.is_drum:
