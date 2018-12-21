@@ -1,8 +1,8 @@
 # local path
 
-dataset_path: '/tmp/jrw8217/project3/data_midi'
+dataset_path: '/tmp/jrw8217/data/bach/cantatas'
 #dataset_path : '/home/wan/Documents/projects/data/test_chord'
-result_path: '/tmp/jrw8217/project3/data_midi_processed'
+result_path: '/tmp/jrw8217/data/bach_processed'
 #result_path : '/home/wan/Documents/projects/data_preprocessed/test_chord_preprocessed'
 
 

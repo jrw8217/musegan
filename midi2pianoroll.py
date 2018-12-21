@@ -179,10 +179,11 @@ def get_piano_roll(instrument, numerators, denominators, beat_resolution=4, beat
             if note.start >= beat_times[0]:
                 start_beat = np.searchsorted(beat_times, note.start, side='right') - 1
                 start_loc = (note.start - beat_times[start_beat])
-                # print 'start loc1', start_loc
-                # print 'tempo array', tempo_array[int(start_beat*ppbeat)]
+                print 'start loc1', start_loc
+                print 'tempo array', tempo_array[int(start_beat*ppbeat)]
+                print (tempo_array[int(start_beat*ppbeat)] / 60.0) * start_loc
                 start_loc = 8 * start_loc
-                # start_loc = (tempo_array[int(start_beat*ppbeat)] / 60.0) * start_loc
+
             else:
                 start_beat = 0
                 start_loc = [0.0]
@@ -199,8 +200,8 @@ def get_piano_roll(instrument, numerators, denominators, beat_resolution=4, beat
             else:
                 end_beat = np.searchsorted(beat_times, note.end, side='right') - 1
                 end_loc = (note.end - beat_times[end_beat])
+                print end_loc * tempo_array[int(end_beat*ppbeat)] / 60.0
                 end_loc = end_loc * 8 / 60.0
-                # end_loc = end_loc * tempo_array[int(end_beat*ppbeat)] / 60.0
                 print 'end loc:', end_loc
                 end_idx = int(end_beat*ppbeat) + int(round(end_loc*ppbeat))
                 # make sure the note length is larger than minimum note length
@@ -645,10 +646,10 @@ def get_piano_rolls(pm, beat_resolution=4):
     onset_rolls = []
     # get the midi information and the beat/tempo arrays
     midi_info, midi_arrays = get_midi_info_and_arrays(pm, beat_resolution)
-    print(midi_arrays['tempi'])
-    if midi_arrays['tempi'][0] != 120.0:
-        print("not 120 bpm!")
-        return None
+    # print(midi_arrays['tempi'])
+    # if midi_arrays['tempi'][0] != 120.0:
+    #     print("not 120 bpm!")
+    #     return None
 
     numerators = midi_arrays['time_signature_numerators']
     denominators = midi_arrays['time_signature_denominators']
@@ -669,15 +670,15 @@ def get_piano_rolls(pm, beat_resolution=4):
     # iterate thorugh all instruments
     for idx, instrument in enumerate(pm.instruments):
         # get the piano-roll and the onset-roll of a specific instrument
-        last_beat_time = midi_arrays['beat_times'][-1]
-        beat_times = [0.]
-        while beat_times[-1] < last_beat_time:
-            beat_times.append(beat_times[-1] + 0.125)
+        # last_beat_time = midi_arrays['beat_times'][-1]
+        # beat_times = [0.]
+        # while beat_times[-1] < last_beat_time:
+        #     beat_times.append(beat_times[-1] + 0.125)
 
 
         piano_roll, onset_roll = get_piano_roll(instrument, numerators, denominators, beat_resolution=1,
-                                                # beat_times=midi_arrays['beat_times'],
-                                                beat_times=beat_times,
+                                                beat_times=midi_arrays['beat_times'],
+                                                # beat_times=beat_times,
                                                 tempo_array=midi_arrays['tempo_array'])
 
         if not instrument.is_drum:
@@ -688,13 +689,13 @@ def get_piano_rolls(pm, beat_resolution=4):
                 for pitch in range(piano_roll.shape[1]):
                     if pitch >= key_pitch:
                         new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
-            #
-            #
-            # new_onset_roll = np.zeros(shape=onset_roll.shape, dtype=int)
-            # for time_slice in range(onset_roll.shape[0]):
-            #     for pitch in range(onset_roll.shape[1]):
-            #         if pitch >= key_pitch:
-            #             new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
+
+
+            new_onset_roll = np.zeros(shape=onset_roll.shape, dtype=int)
+            for time_slice in range(onset_roll.shape[0]):
+                for pitch in range(onset_roll.shape[1]):
+                    if pitch >= key_pitch:
+                        new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
 
             # append the piano-roll to the piano-roll list and the onset-roll list
             piano_rolls.append(new_piano_roll)
