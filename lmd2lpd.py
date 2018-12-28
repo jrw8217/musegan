@@ -143,6 +143,14 @@ def converter(filepath):
     if settings['link_to_msd']:
         msd_id = os.path.basename(os.path.dirname(filepath))
     # convert the midi file into piano-rolls
+
+    with open('lmd_genre_dict.pkl', 'rb') as f:
+        genre_dict = pickle.load(f)
+
+
+    if filepath.split(['/'][:-2]) not in genre_dict.keys():
+        print('Not have genre info')
+        return None
     try:
         piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
         # with open('key_list_fixed.txt', 'a') as f:
@@ -184,6 +192,7 @@ def converter(filepath):
     save_npz(os.path.join(result_midi_dir, 'arrays.npz'), arrays=arrays, sparse_matrices=sparse_matrices)
     # save the instrument dictionary into a json file
     save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
+    save_dict_to_json(genre_dict[filepath.split(['/'][:-2])], os.path.join(result_midi_dir, 'genre.json'))
     # add a key value pair storing the midi_md5 of the selected midi file if link_to_msd is set True
     if settings['link_to_msd']:
         return (msd_id, {midi_md5: info_dict['midi_info']})
