@@ -27,6 +27,6 @@ for line in x:
     count += 1
 
 print(count)
-with open('lmd_genre_artist.pkl', 'w') as f:
+with open('lmd_genre_artist_py2.pkl', 'w') as f:
     pickle.dump(genre_dict, f)
 
