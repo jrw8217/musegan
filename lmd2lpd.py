@@ -147,10 +147,10 @@ def converter(filepath):
     with open('lmd_genre_artist_py2.pkl', 'r') as f:
         genre_dict = pickle.load(f)
 
-    print(filepath.split('/')[-2])
-    if filepath.split('/')[-2] not in genre_dict.keys():
-        print('Not have genre info')
-        return None
+    # print(filepath.split('/')[-2])
+    # if filepath.split('/')[-2] not in genre_dict.keys():
+    #     print('Not have genre info')
+    #     return None
     try:
         piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature = midi_to_pianorolls(filepath, beat_resolution=settings['beat_resolution'])
         # with open('key_list_fixed.txt', 'a') as f:
@@ -191,8 +191,8 @@ def converter(filepath):
     arrays = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key not in sparse_matrices_keys}
     save_npz(os.path.join(result_midi_dir, 'arrays.npz'), arrays=arrays, sparse_matrices=sparse_matrices)
     # save the instrument dictionary into a json file
-    save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
-    save_dict_to_json(genre_dict[filepath.split('/')[-2]], os.path.join(result_midi_dir, 'genre.json'))
+    # save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
+    # save_dict_to_json(genre_dict[filepath.split('/')[-2]], os.path.join(result_midi_dir, 'genre.json'))
     # add a key value pair storing the midi_md5 of the selected midi file if link_to_msd is set True
     if settings['link_to_msd']:
         return (msd_id, {midi_md5: info_dict['midi_info']})
@@ -205,6 +205,9 @@ def main():
     # traverse from dataset root directory and serarch for midi files
     midi_filepaths = []
     for dirpath, subdirs, filenames in os.walk(settings['dataset_path']):
+        if not filenames:
+            continue
+
         for filename in filenames:
             if filename.endswith('.mid'):
                 print(filename)

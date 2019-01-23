@@ -368,18 +368,18 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
     #     for time_slice in range(piano_roll.shape[0]):
     #         for pitch in range(piano_roll.shape[1]):
     #             if pitch >= key_pitch:
-    #                 new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
+    #                 new_piano_roll[time_slice][pitch-key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
     #
     #     new_piano_rolls.append(new_piano_roll)
 
-    new_onset_rolls = []
-    for onset_roll in onset_rolls:
-        new_onset_roll = np.zeros(shape = onset_roll.shape, dtype = int)
-        for time_slice in range(onset_roll.shape[0]):
-            for pitch in range(onset_roll.shape[1]):
-                if pitch >= key_pitch:
-                    new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
-        new_onset_rolls.append(new_onset_roll)
+    # new_onset_rolls = []
+    # for onset_roll in onset_rolls:
+    #     new_onset_roll = np.zeros(shape = onset_roll.shape, dtype = int)
+    #     for time_slice in range(onset_roll.shape[0]):
+    #         for pitch in range(onset_roll.shape[1]):
+    #             if pitch >= key_pitch:
+    #                 new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
+    #     new_onset_rolls.append(new_onset_roll)
 
 
     # new_total_rolls = np.zeros(shape = total_rolls.shape, dtype = int)
@@ -414,7 +414,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
 
     # chords = []
     # chords = chord_extraction_test_with_bass.find_chord_from_bass_note(0, bass_notes_for_chords)
-    # chords = chord_extraction_test_with_bass.find_triad_chord_include_nondiatonic(0, new_total_rolls, new_bass_piano_roll)
+    chords = chord_extraction_test_with_bass.find_triad_chord_include_nondiatonic(key, total_rolls, bass_piano_roll)
 
     # print('chords:', chords, type(chords))
 
@@ -422,7 +422,7 @@ def get_piano_rolls_with_estimated_key(pm, beat_resolution=4):
                  'midi_info': midi_info,
                  'instrument_info': instrument_info}
 
-    return None, new_onset_rolls, info_dict, None, key, key_from_signature
+    return piano_rolls, onset_rolls, info_dict, chords, key, key_from_signature
 
 def get_piano_rolls_with_Krumhansl_key(pm, key, beat_resolution=4):
     """
@@ -824,7 +824,7 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
         pm = pretty_midi.PrettyMIDI(midi_path)
         # result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
         # result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
-        result = get_piano_rolls(pm, beat_resolution)
+        result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
         # del key
 
     except Exception as error:
