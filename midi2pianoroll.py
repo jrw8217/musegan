@@ -116,7 +116,7 @@ def get_tempo_info_and_arrays(pm, beat_resolution=4, beat_times=None):
             tempo_array[tempo_start_beat:tempo_end_beat] = tempi[tempo_id]
             tempo_start_beat = tempo_end_beat
             tempo_id += 1
-        # deal with the rest beats
+        # deal with the rest beatscd
         tempo_array[tempo_start_beat:] = tempi[tempo_id]
     # collect variables into dictionaries to return
     tempo_info = {'tempo': tempi[0] if len(tempo_change_times) == 1 else None}
@@ -665,11 +665,11 @@ def get_piano_rolls(pm, beat_resolution=4):
         if not instrument.is_drum:
             # print(instrument)
             # shift piano roll to ckey
-            new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
-            for time_slice in range(piano_roll.shape[0]):
-                for pitch in range(piano_roll.shape[1]):
-                    if pitch >= key_pitch:
-                        new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
+            # new_piano_roll = np.zeros(shape = piano_roll.shape, dtype = int)
+            # for time_slice in range(piano_roll.shape[0]):
+            #     for pitch in range(piano_roll.shape[1]):
+            #         if pitch >= key_pitch:
+            #             new_piano_roll[time_slice][pitch - key_pitch] = 1 if piano_roll[time_slice][pitch] != 0 else 0
             #
             #
             # new_onset_roll = np.zeros(shape=onset_roll.shape, dtype=int)
@@ -679,7 +679,7 @@ def get_piano_rolls(pm, beat_resolution=4):
             #             new_onset_roll[time_slice][pitch - key_pitch] = onset_roll[time_slice][pitch]
 
             # append the piano-roll to the piano-roll list and the onset-roll list
-            piano_rolls.append(new_piano_roll)
+            piano_rolls.append(piano_roll)
             onset_rolls.append(onset_roll)
         else:
             piano_rolls.append(np.zeros(shape = piano_roll.shape, dtype = int))
@@ -824,7 +824,7 @@ def midi_to_pianorolls(midi_path, beat_resolution=4):
         pm = pretty_midi.PrettyMIDI(midi_path)
         # result = get_piano_rolls_with_Krumhansl_key(pm, key_name, beat_resolution)
         # result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
-        result = get_piano_rolls_with_estimated_key(pm, beat_resolution)
+        result = get_piano_rolls(pm, beat_resolution)
         # del key
 
     except Exception as error:

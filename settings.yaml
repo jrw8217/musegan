@@ -1,8 +1,8 @@
 # local path
 
-dataset_path: '/data1/lakh/lmd_genre_with_melody'
+dataset_path: '/data1/lakh/lmd_full'
 #dataset_path : '/home/wan/dataset/lakh/lmd_matched_test'
-result_path: '/data1/lakh/lmd_genre_with_melody'
+result_path: '/data1/lakh/new_lmd_full_processed_nonbinary'
 #result_path : '/home/wan/dataset/lakh/lmd_matched_genre_test'
 
 
