@@ -691,6 +691,8 @@ def get_piano_rolls(pm, beat_resolution=4):
 
         # append information of current instrument to instrument dictionary
         instrument_info[str(idx)] = get_instrument_info(instrument)
+        if 'melod' in instrument_info[str(idx)]['name'].lower() and np.count_nonzero(piano_roll) < 15:
+            instrument_info[str(idx)]['name'] = ''
 
         # if instrument_info[str(idx)]['program_num'] > 31 and instrument_info[str(idx)]['program_num'] < 40:
         #     # print('program number: ', instrument_info[str(idx)]['program_num'], instrument_info[str(idx)]['program_name'])

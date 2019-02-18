@@ -191,7 +191,7 @@ def converter(filepath):
     arrays = {key: value for key, value in info_dict['midi_arrays'].iteritems() if key not in sparse_matrices_keys}
     save_npz(os.path.join(result_midi_dir, 'arrays.npz'), arrays=arrays, sparse_matrices=sparse_matrices)
     # save the instrument dictionary into a json file
-    # save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
+    save_dict_to_json(info_dict['instrument_info'], os.path.join(result_midi_dir, 'instruments.json'))
     # save_dict_to_json(genre_dict[filepath.split('/')[-2]], os.path.join(result_midi_dir, 'genre.json'))
     # add a key value pair storing the midi_md5 of the selected midi file if link_to_msd is set True
     if settings['link_to_msd']:
@@ -215,7 +215,7 @@ def main():
                 #     print('Already exists', filename)
                 #     continue
                 midi_filepaths.append(os.path.join(dirpath, filename))
-                break
+                # break
 
     midi_filepaths.reverse()
 
