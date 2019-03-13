@@ -1,9 +1,9 @@
 # local path
 
-dataset_path: '/data1/lakh/test_0313'
-#dataset_path : '/home/wan/Documents/projects/data/pianoroll_test'
-result_path: '/data1/lakh/test_0313_processed'
-#result_path : '/home/wan/Documents/projects/data_processed/pianoroll_test2'
+#dataset_path: '/data1/lakh/test_0313'
+dataset_path : '/home/wan/Documents/projects/test_0313'
+#result_path: '/data1/lakh/test_0313_processed'
+result_path : '/home/wan/Documents/projects/data_processed/test_0313'
 
 
 # parameters
