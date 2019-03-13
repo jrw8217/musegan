@@ -107,21 +107,21 @@ def get_tempo_info_and_arrays(pm, beat_resolution=4, beat_times=None):
     else:
         # deal with the first tempo change event
         tempo_end_beat = (np.searchsorted(beat_times, tempo_change_times[0], side='right')) * beat_resolution
-        tempo_array[0:tempo_end_beat] = tempi[0]
+        tempo_array[0:tempo_end_beat] = np.around(tempi[0])
         tempo_start_beat = tempo_end_beat
         # deal with the rest tempo change event
         tempo_id = 0
         while tempo_id+1 < len(tempo_change_times):
             tempo_end_beat = (np.searchsorted(beat_times, tempo_change_times[tempo_id+1], side='right')) * beat_resolution
-            tempo_array[tempo_start_beat:tempo_end_beat] = tempi[tempo_id]
+            tempo_array[tempo_start_beat:tempo_end_beat] = np.around(tempi[tempo_id])
             tempo_start_beat = tempo_end_beat
             tempo_id += 1
         # deal with the rest beatscd
-        tempo_array[tempo_start_beat:] = tempi[tempo_id]
+        tempo_array[tempo_start_beat:] = np.around(tempi[tempo_id])
     # collect variables into dictionaries to return
-    tempo_info = {'tempo': tempi[0] if len(tempo_change_times) == 1 else None}
+    tempo_info = {'tempo': np.around(tempi[0]) if len(tempo_change_times) == 1 else None}
     tempo_arrays = {'tempo_change_times': tempo_change_times,
-                    'tempi': tempi,
+                    'tempi': np.around(tempi),
                     'tempo_array': tempo_array}
     # for i, tempo in enumerate(tempo_array):
     #     print i, tempo

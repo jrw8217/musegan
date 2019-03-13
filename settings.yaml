@@ -1,12 +1,12 @@
 # local path
 
-dataset_path: '/data1/lakh/lmd_full'
+dataset_path: '/data1/lakh/test_0313'
 #dataset_path : '/home/wan/Documents/projects/data/pianoroll_test'
-result_path: '/data1/lakh/new_lmd_full_processed_nonbinary_rmsm'
+result_path: '/data1/lakh/test_0313_processed'
 #result_path : '/home/wan/Documents/projects/data_processed/pianoroll_test2'
 
 
 # parameters
 beat_resolution: 4
-multicore: 15
+multicore: 1
 link_to_msd: False
