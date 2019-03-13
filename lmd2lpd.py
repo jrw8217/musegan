@@ -144,8 +144,8 @@ def converter(filepath):
         msd_id = os.path.basename(os.path.dirname(filepath))
     # convert the midi file into piano-rolls
 
-    with open('lmd_genre_artist_py2.pkl', 'r') as f:
-        genre_dict = pickle.load(f)
+    # with open('lmd_genre_artist_py2.pkl', 'r') as f:
+    #     genre_dict = pickle.load(f)
 
     # print(filepath.split('/')[-2])
     # if filepath.split('/')[-2] not in genre_dict.keys():
