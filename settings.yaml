@@ -1,12 +1,12 @@
 # local path
 
-#dataset_path: '/data1/lakh/test_0313'
-dataset_path : '/home/wan/Documents/projects/test_0313'
-#result_path: '/data1/lakh/test_0313_processed'
-result_path : '/home/wan/Documents/projects/data_processed/test_0313'
+dataset_path: '/data1/lakh/lmd_full'
+#dataset_path : '/home/wan/Documents/projects/test_0313'
+result_path: '/data1/lakh/lmd_full_processed_0314'
+#result_path : '/home/wan/Documents/projects/data_processed/test_0313'
 
 
 # parameters
 beat_resolution: 4
-multicore: 1
+multicore: 15
 link_to_msd: False
