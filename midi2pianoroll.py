@@ -162,13 +162,13 @@ def get_piano_roll(instrument, beat_resolution=4, beat_times=None, tempo_array=N
     piano_roll = np.zeros(shape=(beat_resolution*num_beats, 128), dtype=int)
     onset_roll = np.zeros(shape=(beat_resolution*num_beats, 128), dtype=bool)
     # print beat_times
-    print tempo_array
+    # print tempo_array
     # calculate pixel per beat
     ppbeat = beat_resolution
     hppbeat = beat_resolution/2
     # iterate through notes
     for note in instrument.notes:
-        if note.end < beat_times[0] or note.start < 82:
+        if note.end < beat_times[0]:
             continue
         else:
             # print '----------------------------'
